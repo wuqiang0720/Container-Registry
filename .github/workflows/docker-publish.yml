@@ -1,7 +1,9 @@
-name: Build and Push Docker Images
+# .github/workflows/push-nginx.yml
+name: Build and Push NGINX Image
 
 on:
-  workflow_dispatch:   # 手动触发，也可加 push trigger
+  push:
+    branches: [main]   # 或者用 workflow_dispatch 手动触发
 
 permissions:
   contents: read
@@ -22,10 +24,9 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Build and push multiple images
-        run: |
-          docker build -t ghcr.io/${{ github.repository_owner }}/image1:latest ./path-to-image1
-          docker push ghcr.io/${{ github.repository_owner }}/image1:latest
-
-          docker build -t ghcr.io/${{ github.repository_owner }}/image2:latest ./path-to-image2
-          docker push ghcr.io/${{ github.repository_owner }}/image2:latest
+      - name: Build and push NGINX image
+        uses: docker/build-push-action@v5
+        with:
+          context: ./nginx
+          push: true
+          tags: ghcr.io/wuqiang0720/nginx:latest
