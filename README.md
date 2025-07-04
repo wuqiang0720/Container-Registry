@@ -15,7 +15,7 @@
 - 镜像地址：
     `ghcr.io/wuqiang0720/phpldapadmin:https`
     `ghcr.io/wuqiang0720/openldap:latest`
-- 说明：用于子网划分计算，基于 Flask 的 Web 应用
+- 说明：容器部署ldapserver，并可以https访问
 - 启动方式：
   ```bash
   ubuntu@ubuntu:~/docker-compose/ldap+phpadmin$ cat docker-compose.yaml
@@ -29,5 +29,17 @@
   f7cd7d88f66a   ghcr.io/wuqiang0720/phpldapadmin:https      "/container/tool/run"    4 seconds ago    Up 3 seconds    0.0.0.0:8080->80/tcp, [::]:8080->80/tcp, 0.0.0.0:6443->443/tcp, [::]:6443->443/tcp   phpldapadmin
   4d5b8b9d070d   ghcr.io/wuqiang0720/openldap:latest         "/container/tool/run"    4 seconds ago    Up 3 seconds    0.0.0.0:389->389/tcp, [::]:389->389/tcp, 0.0.0.0:636->636/tcp, [::]:636->636/tcp     openldap
   ```
-
-
+### 3. Galera+mariadb+haproxy
+- 镜像地址：
+    `ghcr.io/wuqiang0720/mariadb-galera:latest`
+    `ghcr.io/wuqiang0720/haproxy:latest`
+- 说明：mariadb 集群部署和haproxy负载均衡
+- 启动方式：
+  ```bash
+  ubuntu@ubuntu:~/docker-compose/galera-cluster$ docker compose up -d
+  [+] Running 5/5
+   ✔ Network galera-cluster_galera-net   Created                                                                                                                  0.1s
+   ✔ Container mariadb-node3             Started                                                                                                                  0.4s
+   ✔ Container galera-cluster-haproxy-1  Started                                                                                                                  0.5s
+   ✔ Container mariadb-node2             Started                                                                                                                  0.5s
+   ✔ Container mariadb-node1             Started              
