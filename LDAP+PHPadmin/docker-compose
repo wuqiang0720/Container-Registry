@@ -1,0 +1,28 @@
+services:
+  openldap:
+    image: ghcr.io/wuqiang0720/openldap:latest
+    container_name: openldap
+    environment:
+      LDAP_ORGANISATION: "xxxx"
+      LDAP_DOMAIN: "xxx.xxxx.COM"
+      LDAP_ADMIN_PASSWORD: "admin"
+    ports:
+      - "389:389"
+      - "636:636"
+    volumes:
+      - ./ldap/data:/var/lib/ldap
+      - ./ldap/config:/etc/ldap/slapd.d
+    restart: unless-stopped
+
+  phpldapadmin:
+    image: ghcr.io/wuqiang0720/phpldapadmin:https
+    container_name: phpldapadmin
+    environment:
+      PHPLDAPADMIN_LDAP_HOSTS: openldap
+      PHPLDAPADMIN_HTTPS: "true"
+    ports:
+      - "8080:80"
+      - "6443:443"
+    depends_on:
+      - openldap
+    restart: unless-stopped
