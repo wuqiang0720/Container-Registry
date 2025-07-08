@@ -3,8 +3,8 @@ services:
     image: ghcr.io/wuqiang0720/openldap:latest
     container_name: openldap
     environment:
-      LDAP_ORGANISATION: "xxxx"
-      LDAP_DOMAIN: "xxx.xxxx.COM"
+      LDAP_ORGANISATION: "ABC"
+      LDAP_DOMAIN: "AB.BC.COM"
       LDAP_ADMIN_PASSWORD: "admin"
     ports:
       - "389:389"
