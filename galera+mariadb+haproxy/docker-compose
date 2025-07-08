@@ -8,7 +8,7 @@ services:
     ports:
       - "3307:3306"
     environment:
-      - MARIADB_ROOT_PASSWORD=rootpass
+      - MARIADB_ROOT_PASSWORD=123456
       - MARIADB_GALERA_CLUSTER_NAME=galera-cluster
       - MARIADB_GALERA_CLUSTER_ADDRESS=gcomm://
       - MARIADB_GALERA_NODE_NAME=node1
@@ -29,7 +29,7 @@ services:
     ports:
       - "3308:3306"
     environment:
-      - MARIADB_ROOT_PASSWORD=rootpass
+      - MARIADB_ROOT_PASSWORD=123456
       - MARIADB_GALERA_CLUSTER_NAME=galera-cluster
       - MARIADB_GALERA_CLUSTER_ADDRESS=gcomm://mariadb-node1,mariadb-node2,mariadb-node3
       - MARIADB_GALERA_NODE_NAME=node2
@@ -47,7 +47,7 @@ services:
     ports:
       - "3309:3306"
     environment:
-      - MARIADB_ROOT_PASSWORD=rootpass
+      - MARIADB_ROOT_PASSWORD=123456
       - MARIADB_GALERA_CLUSTER_NAME=galera-cluster
       - MARIADB_GALERA_CLUSTER_ADDRESS=gcomm://mariadb-node1,mariadb-node2,mariadb-node3
       - MARIADB_GALERA_NODE_NAME=node3
