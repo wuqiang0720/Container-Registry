@@ -3,15 +3,15 @@ services:
     image: ghcr.io/wuqiang0720/openldap:latest
     container_name: openldap
     environment:
-      LDAP_ORGANISATION: "ABC"
-      LDAP_DOMAIN: "AB.BC.COM"
+      LDAP_ORGANISATION: "Ericsson AB"
+      LDAP_DOMAIN: "HDS8000.ERICSSON.COM"
       LDAP_ADMIN_PASSWORD: "admin"
     ports:
       - "389:389"
       - "636:636"
     volumes:
-      - ./ldap/data:/var/lib/ldap
-      - ./ldap/config:/etc/ldap/slapd.d
+      - openldap_data:/var/lib/ldap
+      - openldap_conf:/etc/ldap/slapd.d
     restart: unless-stopped
 
   phpldapadmin:
@@ -26,3 +26,9 @@ services:
     depends_on:
       - openldap
     restart: unless-stopped
+    volumes:
+      - phpldapadmin_data:/var/www/phpldapadmin
+volumes:
+  openldap_data:
+  openldap_conf:
+  phpldapadmin_data:
