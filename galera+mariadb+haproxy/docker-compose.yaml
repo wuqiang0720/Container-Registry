@@ -58,10 +58,30 @@ services:
   haproxy:
     image: ghcr.io/wuqiang0720/haproxy:latest
     container_name: mariadb-haproxy
+    restart: always
+    depends_on:
+      - mariadb-node3
+      - mariadb-node2
+      - mariadb-node1
+
     volumes:
       - ./haproxy.cfg:/usr/local/etc/haproxy/haproxy.cfg:ro
     ports:
       - "3306:3306"
+    networks:
+      - galera-net
+  phpmyadmin:
+    image: ghcr.io/wuqiang0720/phpmyadmin:latest
+    container_name: phpmyadmin
+    restart: always
+    environment:
+      PMA_HOST: haproxy
+      PMA_PORT: 3306
+      MYSQL_ROOT_PASSWORD: 123456
+    ports:
+      - "8088:80"
+    depends_on:
+      - haproxy
     networks:
       - galera-net
 networks:
