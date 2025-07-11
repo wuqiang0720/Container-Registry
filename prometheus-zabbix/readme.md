@@ -1,3 +1,6 @@
+# issue for “cannot use database "zabbix": its "users" table is empty”
+
+
 ```
 wget https://cdn.zabbix.com/zabbix/sources/stable/7.4/zabbix-7.4.0.tar.gz
 tar zxvf zabbix-7.4.0.tar.gz
