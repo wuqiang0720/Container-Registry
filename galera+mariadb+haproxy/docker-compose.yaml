@@ -1,6 +1,97 @@
+version: '3.7'
+
+services:
+
+  zabbix-server:
+    image: ghcr.io/wuqiang0720/zabbix-server-mysql:alpine-latest
+    container_name: zabbix-server
+    restart: always
+    environment:
+      DB_SERVER_HOST: 192.168.126.100
+      MYSQL_USER: zabbix
+      MYSQL_PASSWORD: 123456
+      MYSQL_DATABASE: zabbix
+    ports:
+      - "10051:10051"
+    depends_on:
+      - node-exporter
+    networks:
+      - zabbix-net
+
+  zabbix-web:
+    image: ghcr.io/wuqiang0720/zabbix-web-nginx-mysql:alpine-latest
+    container_name: zabbix-web
+    restart: always
+    environment:
+      DB_SERVER_HOST: 192.168.126.100
+      MYSQL_USER: zabbix
+      MYSQL_PASSWORD: 123456
+      MYSQL_DATABASE: zabbix
+      ZBX_SERVER_HOST: zabbix-server
+      PHP_TZ: Asia/Shanghai
+    ports:
+      - "8888:8080"     # 避开被占用的 8080 端口
+      - "9443:8443"
+    depends_on:
+      - zabbix-server
+    networks:
+      - zabbix-net
+
+  prometheus:
+    image: ghcr.io/wuqiang0720/prometheus
+    container_name: prometheus
+    restart: always
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+    networks:
+      - zabbix-net
+
+  node-exporter:
+    image: ghcr.io/wuqiang0720/node-exporter
+    container_name: node-exporter
+    restart: always
+    ports:
+      - "9100:9100"
+    networks:
+      - zabbix-net
+
+  cadvisor:
+    image: ghcr.io/wuqiang0720/cadvisor
+    container_name: cadvisor
+    restart: always
+    ports:
+      - "8081:8080"
+    volumes:
+      - /:/rootfs:ro
+      - /var/run:/var/run:ro
+      - /sys:/sys:ro
+      - /var/lib/docker/:/var/lib/docker:ro
+
+    networks:
+      - zabbix-net
+
+networks:
+  zabbix-net:
+    driver: bridge
+
+ubuntu@ubuntu:~/docker-compose/prometheus-zabbix$
+ubuntu@ubuntu:~/docker-compose/prometheus-zabbix$
+ubuntu@ubuntu:~/docker-compose/prometheus-zabbix$
+ubuntu@ubuntu:~/docker-compose/prometheus-zabbix$ cd ..
+ubuntu@ubuntu:~/docker-compose$  cd galera-cluster/
+ubuntu@ubuntu:~/docker-compose/galera-cluster$ ll
+total 12
+drwxrwxr-x 2 ubuntu ubuntu 4096 Jul 11 08:38 ./
+drwxrwxr-x 6 ubuntu ubuntu 4096 Jul 11 05:53 ../
+-rw-rw-r-- 1 ubuntu ubuntu 2493 Jul 11 08:38 docker-compose.yaml
+ubuntu@ubuntu:~/docker-compose/galera-cluster$ ca docker-compose.yaml
+ca: command not found
+ubuntu@ubuntu:~/docker-compose/galera-cluster$ cat docker-compose.yaml
 services:
   mariadb-node1:
-    image: ghcr.io/wuqiang0720/mariadb-galera:latest
+    image: ghcr.io/wuqiang0720/mariadb-galera:10.5
     container_name: mariadb-node1
     restart: always
     networks:
@@ -21,7 +112,7 @@ services:
       - mariadb_data1:/bitnami/mariadb
 
   mariadb-node2:
-    image: ghcr.io/wuqiang0720/mariadb-galera:latest
+    image: ghcr.io/wuqiang0720/mariadb-galera:10.5
     container_name: mariadb-node2
     restart: always
     networks:
@@ -39,7 +130,7 @@ services:
       - mariadb_data2:/bitnami/mariadb
 
   mariadb-node3:
-    image: ghcr.io/wuqiang0720/mariadb-galera:latest
+    image: ghcr.io/wuqiang0720/mariadb-galera:10.5
     container_name: mariadb-node3
     restart: always
     networks:
@@ -56,7 +147,7 @@ services:
     volumes:
       - mariadb_data3:/bitnami/mariadb
   haproxy:
-    image: ghcr.io/wuqiang0720/haproxy:latest
+    image: ghcr.io/wuqiang0720/haproxy:mariadb
     container_name: mariadb-haproxy
     restart: always
     depends_on:
@@ -64,22 +155,20 @@ services:
       - mariadb-node2
       - mariadb-node1
 
-    volumes:
-      - ./haproxy.cfg:/usr/local/etc/haproxy/haproxy.cfg:ro
     ports:
       - "3306:3306"
     networks:
       - galera-net
   phpmyadmin:
     image: ghcr.io/wuqiang0720/phpmyadmin:latest
-    container_name: phpmyadmin
+    container_name: mariadb-phpmyadmin
     restart: always
     environment:
       PMA_HOST: haproxy
       PMA_PORT: 3306
       MYSQL_ROOT_PASSWORD: 123456
     ports:
-      - "8088:80"
+      - "80:80"
     depends_on:
       - haproxy
     networks:
