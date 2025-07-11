@@ -32,3 +32,11 @@ EXIT;
 mysql -h 192.168.126.100 -u zabbix -p123456 zabbix < zabbix.sql
 ```
 
+
+
+查询zabbix 版本
+
+```
+docker run --rm ghcr.io/wuqiang0720/zabbix-server-mysql:alpine-latest zabbix_server -V
+
+```
