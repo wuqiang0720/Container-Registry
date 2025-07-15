@@ -5,8 +5,8 @@ objectClass: shadowAccount
 objectClass: organizationalPerson
 objectClass: person
 uid: ewuiaqx
-sn: Alice
-givenName: Alice
+sn: ewuiaqx
+givenName: Qiang Wu
 cn: wuqiang
 displayName: wuqiang
 uidNumber: 10000
