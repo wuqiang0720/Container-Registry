@@ -1,0 +1,32 @@
+# 添加一个完整的 UNIX 用户到 LDAP 的示例 LDIF 文件（明文密码版）
+dn: uid=ewuiaqx,ou=Operations,dc=HDS8000,dc=ERICSSON,dc=com
+objectClass: inetOrgPerson        # 支持用户基本信息、邮箱等
+objectClass: posixAccount         # UNIX 用户账号属性
+objectClass: shadowAccount        # 密码和账户过期相关
+objectClass: organizationalPerson # 组织人员类，包含职位等
+objectClass: person               # 基本人员类，支持姓名等
+uid: ewuiaqx                       # 用户名，唯一标识
+sn: Alice                       # 姓（必须）
+givenName: Alice                 # 名
+cn: wuqiang                 # 全名，常用名
+displayName: wuqiang         # 显示名称
+uidNumber: 10000                # 用户ID（UID），系统唯一
+gidNumber: 10000                # 组ID（GID），系统唯一
+homeDirectory: /home/ewuiaqx      # 用户家目录路径
+loginShell: /bin/bash           # 登录 Shell
+mail: wuqiang0720@126.com    # 邮箱
+telephoneNumber: +86 1862925648 # 电话号码
+mobile: +86 18629256548          # 手机号码
+title: Software Engineer        # 职位名称
+departmentNumber: 1001          # 部门编号
+employeeNumber: 23759230           # 员工编号
+employeeType: regular        # 员工类型
+description: LDAP user account for wuqiang
+gecos: wuqiang             # Gecos 字段，通常和 passwd 文件类似
+userPassword: 123456  # 明文密码（不安全，建议生产环境用加密）
+loginDisabled: FALSE            # 是否禁用登录，部分LDAP实现支持
+shadowLastChange: 18000         # 上次修改密码的时间（自1970-01-01起的天数）
+shadowMin: 0                   # 密码最短使用天数
+shadowMax: 99999               # 密码最长使用天数
+shadowWarning: 7               # 密码过期前预警天数
+
