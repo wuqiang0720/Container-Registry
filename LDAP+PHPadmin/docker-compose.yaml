@@ -1,6 +1,6 @@
 services:
   openldap:
-    image: ghcr.io/wuqiang0720/openldap:latest
+    image: ghcr.io/wuqiang0720/openldap:2.5.47
     container_name: openldap
     environment:
       LDAP_ORGANISATION: "Ericsson AB"
