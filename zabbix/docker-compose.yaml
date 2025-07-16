@@ -46,8 +46,6 @@ services:
     networks:
       zabbix-net:
         ipv4_address: 192.168.128.5
-    volumes:
-      - ./zabbix_agent2.conf:/etc/zabbix/zabbix_agent2.conf
   collectd:
     image: ghcr.io/wuqiang0720/collectd:debian
     container_name: collectd
