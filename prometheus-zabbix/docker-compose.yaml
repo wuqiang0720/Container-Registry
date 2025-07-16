@@ -1,77 +1,62 @@
-version: '3.7'
-
 services:
-
   zabbix-server:
     image: ghcr.io/wuqiang0720/zabbix-server-mysql:alpine-latest
     container_name: zabbix-server
     restart: always
     environment:
-      DB_SERVER_HOST: 192.168.126.100
+      DB_SERVER_HOST: 192.168.125.100
       MYSQL_USER: zabbix
       MYSQL_PASSWORD: 123456
       MYSQL_DATABASE: zabbix
+
     ports:
       - "10051:10051"
-    depends_on:
-      - node-exporter
     networks:
-      - zabbix-net
+      zabbix-net:
+        ipv4_address: 192.168.128.10
 
   zabbix-web:
     image: ghcr.io/wuqiang0720/zabbix-web-nginx-mysql:alpine-latest
     container_name: zabbix-web
     restart: always
     environment:
-      DB_SERVER_HOST: 192.168.126.100
+      DB_SERVER_HOST: 192.168.125.100
       MYSQL_USER: zabbix
       MYSQL_PASSWORD: 123456
       MYSQL_DATABASE: zabbix
       ZBX_SERVER_HOST: zabbix-server
       PHP_TZ: Asia/Shanghai
     ports:
-      - "8888:8080"     # 避开被占用的 8080 端口
+      - "8888:8080"
       - "9443:8443"
     depends_on:
       - zabbix-server
     networks:
       - zabbix-net
 
-  prometheus:
-    image: ghcr.io/wuqiang0720/prometheus
-    container_name: prometheus
+  zabbix-agent:
+    image: ghcr.io/wuqiang0720/zabbix-agent2cli:alpine-latest
+    container_name: zabbix-agent
     restart: always
+    environment:
+      ZBX_SERVER_HOST: zabbix-server
+      ZBX_HOSTNAME: ubuntu-agent
     ports:
-      - "9090:9090"
+      - "10050:10050"
+    networks:
+      zabbix-net:
+        ipv4_address: 192.168.128.5
     volumes:
-      - ./prometheus.yml:/etc/prometheus/prometheus.yml
-    networks:
-      - zabbix-net
-
-  node-exporter:
-    image: ghcr.io/wuqiang0720/node-exporter
-    container_name: node-exporter
+      - ./zabbix_agent2.conf:/etc/zabbix/zabbix_agent2.conf
+  collectd:
+    image: ghcr.io/wuqiang0720/collectd:debian
+    container_name: collectd
     restart: always
-    ports:
-      - "9100:9100"
     networks:
       - zabbix-net
-
-  cadvisor:
-    image: ghcr.io/wuqiang0720/cadvisor
-    container_name: cadvisor
-    restart: always
-    ports:
-      - "8081:8080"
-    volumes:
-      - /:/rootfs:ro
-      - /var/run:/var/run:ro
-      - /sys:/sys:ro
-      - /var/lib/docker/:/var/lib/docker:ro
-
-    networks:
-      - zabbix-net
-
 networks:
   zabbix-net:
     driver: bridge
+    ipam:
+      config:
+        - subnet: 192.168.128.0/24
