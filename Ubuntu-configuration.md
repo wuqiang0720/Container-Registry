@@ -62,7 +62,7 @@ systemctl restart sssd
 ovs-vsctl add-br br-int -- set bridge br-int datapath_type=system
 ovs-vsctl add-br br_prv -- set bridge br_prv datapath_type=system
 
-sudo ovs-vsctl add-port br_prv eth0
+
 
 ovs-vsctl add-port br-int int-br_prv \
   -- set interface int-br_prv type=patch options:peer=phy-br_prv
