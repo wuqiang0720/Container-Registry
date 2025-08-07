@@ -53,6 +53,7 @@ binddn cn=admin,dc=hds8000,dc=ericsson,dc=com
 bindpw admin
 ldap_tls_reqcert = demand
 EOF
+echo "session required pam_mkhomedir.so skel=/etc/skel/ umask=0022" >> /etc/pam.d/common-session
 
 systemctl restart sssd
 
