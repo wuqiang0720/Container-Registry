@@ -8,10 +8,6 @@ network:
   ethernets:
     eth0:
       addresses: [192.168.125.100/24]
-  bridges:
-    br_prv:
-      addresses: [192.168.1.126/28]
-      addresses: [192.168.1.131/28]
       nameservers:
         addresses:
           - 8.8.8.8
@@ -19,6 +15,11 @@ network:
       routes:
         - to: 0.0.0.0/0
           via: 192.168.125.1
+
+  bridges:
+    br_prv:
+      addresses: [192.168.1.126/28]
+      addresses: [192.168.1.131/28]
     br-int:
       dhcp4: no
       interfaces: []
