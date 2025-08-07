@@ -11,6 +11,9 @@ services:
       - openldap_data:/var/lib/ldap
       - openldap_conf:/etc/ldap/slapd.d
     restart: unless-stopped
+    networks:
+      macvlan_net:
+        ipv4_address: 192.168.1.129
 
     healthcheck:
       test: ["CMD-SHELL", "timeout 5 bash -c ':> /dev/tcp/127.0.0.1/389' || exit 1"]
@@ -32,6 +35,9 @@ services:
     restart: unless-stopped
     volumes:
       - phpldapadmin_data:/var/www/phpldapadmin
+    networks:
+      macvlan_net:
+        ipv4_address: 192.168.1.130
     healthcheck:
       test: ["CMD-SHELL", "timeout 5 bash -c ':> /dev/tcp/127.0.0.1/80' || exit 1"]
       interval: 30s
@@ -42,3 +48,12 @@ volumes:
   openldap_data:
   openldap_conf:
   phpldapadmin_data:
+networks:
+  macvlan_net:
+    driver: macvlan
+    driver_opts:
+      parent: br-int
+    ipam:
+      config:
+        - subnet: 192.168.1.128/28
+          gateway: 192.168.1.131
