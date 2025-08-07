@@ -1,5 +1,6 @@
 ```bash
-apt install -y sssd sssd-ldap libnss-sss libpam-sss ldap-utils sudo-ldap
+apt install -y sssd sssd-ldap libnss-sss libpam-sss ldap-utils sudo-ldap openvswitch-switch
+
 cat <<EOF > /etc/netplan/50-cloud-init.yaml
 network:
   version: 2
