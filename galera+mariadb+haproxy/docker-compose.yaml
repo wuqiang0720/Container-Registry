@@ -4,19 +4,17 @@ services:
     container_name: mariadb-node1
     restart: always
     networks:
-      - galera-net
-    ports:
-      - "3307:3306"
+      macvlan_net:
+        ipv4_address: 192.168.1.121
     environment:
       - MARIADB_ROOT_PASSWORD=123456
       - MARIADB_GALERA_CLUSTER_NAME=galera-cluster
-      - MARIADB_GALERA_CLUSTER_ADDRESS=gcomm://
+      - MARIADB_GALERA_CLUSTER_ADDRESS=gcomm://192.168.1.121,192.168.1.122,192.168.1.123
       - MARIADB_GALERA_NODE_NAME=node1
-      - MARIADB_GALERA_NODE_ADDRESS=mariadb-node1
+      - MARIADB_GALERA_NODE_ADDRESS=192.168.1.121
       - MARIADB_GALERA_MARIABACKUP_PASSWORD=backup123
       - MARIADB_GALERA_CLUSTER_BOOTSTRAP=yes
       - MARIADB_GALERA_FORCE_SAFETOBOOTSTRAP=yes
-
     volumes:
       - mariadb_data1:/bitnami/mariadb
     healthcheck:
@@ -30,15 +28,14 @@ services:
     container_name: mariadb-node2
     restart: always
     networks:
-      - galera-net
-    ports:
-      - "3308:3306"
+      macvlan_net:
+        ipv4_address: 192.168.1.122
     environment:
       - MARIADB_ROOT_PASSWORD=123456
       - MARIADB_GALERA_CLUSTER_NAME=galera-cluster
-      - MARIADB_GALERA_CLUSTER_ADDRESS=gcomm://mariadb-node1,mariadb-node2,mariadb-node3
+      - MARIADB_GALERA_CLUSTER_ADDRESS=gcomm://192.168.1.121,192.168.1.122,192.168.1.123
       - MARIADB_GALERA_NODE_NAME=node2
-      - MARIADB_GALERA_NODE_ADDRESS=mariadb-node2
+      - MARIADB_GALERA_NODE_ADDRESS=192.168.1.122
       - MARIADB_GALERA_MARIABACKUP_PASSWORD=backup123
     volumes:
       - mariadb_data2:/bitnami/mariadb
@@ -52,17 +49,15 @@ services:
     image: ghcr.io/wuqiang0720/mariadb-galera:10.5data
     container_name: mariadb-node3
     restart: always
-
     networks:
-      - galera-net
-    ports:
-      - "3309:3306"
+      macvlan_net:
+        ipv4_address: 192.168.1.123
     environment:
       - MARIADB_ROOT_PASSWORD=123456
       - MARIADB_GALERA_CLUSTER_NAME=galera-cluster
-      - MARIADB_GALERA_CLUSTER_ADDRESS=gcomm://mariadb-node1,mariadb-node2,mariadb-node3
+      - MARIADB_GALERA_CLUSTER_ADDRESS=gcomm://192.168.1.121,192.168.1.122,192.168.1.123
       - MARIADB_GALERA_NODE_NAME=node3
-      - MARIADB_GALERA_NODE_ADDRESS=mariadb-node3
+      - MARIADB_GALERA_NODE_ADDRESS=192.168.1.123
       - MARIADB_GALERA_MARIABACKUP_PASSWORD=backup123
     volumes:
       - mariadb_data3:/bitnami/mariadb
@@ -77,13 +72,12 @@ services:
     container_name: mariadb-haproxy
     restart: always
     depends_on:
-      - mariadb-node3
-      - mariadb-node2
       - mariadb-node1
-    ports:
-      - "3306:3306"
+      - mariadb-node2
+      - mariadb-node3
     networks:
-      - galera-net
+      macvlan_net:
+        ipv4_address: 192.168.1.124
     healthcheck:
       test: ["CMD-SHELL", "timeout 5 bash -c ':> /dev/tcp/127.0.0.1/3306' || exit 1"]
       interval: 15s
@@ -95,15 +89,14 @@ services:
     container_name: mariadb-phpmyadmin
     restart: always
     environment:
-      PMA_HOST: haproxy
+      PMA_HOST: 192.168.1.124
       PMA_PORT: 3306
       MYSQL_ROOT_PASSWORD: 123456
-    ports:
-      - "80:80"
     depends_on:
       - haproxy
     networks:
-      - galera-net
+      macvlan_net:
+        ipv4_address: 192.168.1.125
     healthcheck:
       test: ["CMD-SHELL", "timeout 5 bash -c ':> /dev/tcp/127.0.0.1/80' || exit 1"]
       interval: 15s
@@ -111,8 +104,15 @@ services:
       retries: 6
 
 networks:
-  galera-net:
-    driver: bridge
+  macvlan_net:
+    driver: macvlan
+    driver_opts:
+      parent: br-int
+    ipam:
+      config:
+        - subnet: 192.168.1.112/28
+          gateway: 192.168.1.126
+
 volumes:
   mariadb_data1:
   mariadb_data2:
