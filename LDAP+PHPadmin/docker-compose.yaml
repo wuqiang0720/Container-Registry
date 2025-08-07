@@ -2,11 +2,6 @@ services:
   openldap:
     image: ghcr.io/wuqiang0720/openldap:latest
     container_name: openldap
-    environment:
-      LDAP_TLS: "true"
-    ports:
-      - "389:389"
-      - "636:636"
     volumes:
       - openldap_data:/var/lib/ldap
       - openldap_conf:/etc/ldap/slapd.d
@@ -14,7 +9,6 @@ services:
     networks:
       macvlan_net:
         ipv4_address: 192.168.1.129
-
     healthcheck:
       test: ["CMD-SHELL", "timeout 5 bash -c ':> /dev/tcp/127.0.0.1/389' || exit 1"]
       interval: 30s
@@ -26,10 +20,8 @@ services:
     image: ghcr.io/wuqiang0720/phpldapadmin:https
     container_name: phpldapadmin
     environment:
-      PHPLDAPADMIN_LDAP_HOSTS: openldap
       PHPLDAPADMIN_HTTPS: "false"
-    ports:
-      - "8080:80"
+      PHPLDAPADMIN_LDAP_HOSTS: openldap
     depends_on:
       - openldap
     restart: unless-stopped
