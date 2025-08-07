@@ -21,6 +21,9 @@ network:
       routes:
         - to: 0.0.0.0/0
           via: 192.168.125.1
+    br-int:
+      dhcp4: no
+      interfaces: []
 EOF
 
 cat <<EOF >  /etc/sssd/sssd.conf
