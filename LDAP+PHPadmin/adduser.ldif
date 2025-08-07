@@ -1,29 +1,25 @@
-dn: uid=ewuiaqx,ou=Operations,dc=HDS8000,dc=ERICSSON,dc=com
+dn: cn=Operations,ou=groups,dc=HDS8000,dc=ERICSSON,dc=COM
+cn: Operations
+description: Operations group
+gidnumber: 10000
+objectclass: posixGroup
+
+dn: cn=ubuntu,ou=Sudoers,dc=HDS8000,dc=ERICSSON,dc=com
+objectClass: top
+objectClass: sudoRole
+cn: ubuntu
+sudoUser: ubuntu
+sudoHost: ALL
+sudoCommand: ALL
+
+dn: uid=ubuntu,ou=Operations,dc=HDS8000,dc=ERICSSON,dc=com
 objectClass: inetOrgPerson
 objectClass: posixAccount
-objectClass: shadowAccount
-objectClass: organizationalPerson
-objectClass: person
-uid: ewuiaqx
-sn: ewuiaqx
-givenName: Qiang Wu
-cn: wuqiang
-displayName: wuqiang
+uid: ubuntu
+sn: Wu
+cn: ubuntu
 uidNumber: 10000
-gidNumber: 10000
-homeDirectory: /home/ewuiaqx
+gidNumber: 0
+homeDirectory: /home/ubuntu
 loginShell: /bin/bash
-mail: wuqiang0720@126.com
-telephoneNumber: +86 1862925648
-mobile: +86 18629256548
-title: Software Engineer
-departmentNumber: 1001
-employeeNumber: 23759230
-employeeType: regular
-description: LDAP user account for wuqiang
-gecos: wuqiang
-userPassword: 123456
-shadowLastChange: 18000
-shadowMin: 0
-shadowMax: 99999
-shadowWarning: 7
+userPassword: ubuntu
