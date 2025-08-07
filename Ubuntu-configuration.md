@@ -7,11 +7,9 @@ network:
   renderer: networkd
   ethernets:
     eth0:
-      dhcp4: no
+      addresses: [192.168.125.100/24]
   bridges:
     br_prv:
-      interfaces: [eth0]
-      addresses: [192.168.125.100/24]
       addresses: [192.168.1.126/28]
       addresses: [192.168.1.131/28]
       nameservers:
