@@ -22,7 +22,7 @@ network:
         - to: 0.0.0.0/0
           via: 192.168.125.1
 EOF
-netplan apply
+
 cat <<EOF >  /etc/sssd/sssd.conf
 [sssd]
 config_file_version = 2
@@ -57,5 +57,18 @@ EOF
 echo "session required pam_mkhomedir.so skel=/etc/skel/ umask=0022" >> /etc/pam.d/common-session
 
 systemctl restart sssd
+
+ovs-vsctl add-br br-int -- set bridge br-int datapath_type=system
+ovs-vsctl add-br br_prv -- set bridge br_prv datapath_type=system
+
+sudo ovs-vsctl add-port br_prv eth0
+
+ovs-vsctl add-port br-int int-br_prv \
+  -- set interface int-br_prv type=patch options:peer=phy-br_prv
+
+
+ovs-vsctl add-port br_prv phy-br_prv \
+  -- set interface phy-br_prv type=patch options:peer=int-br_prv
+netplan apply
 
 ```
