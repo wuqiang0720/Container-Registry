@@ -18,8 +18,8 @@ network:
 
   bridges:
     br_prv:
-      addresses: [192.168.1.126/28]
-      addresses: [192.168.1.131/28]
+      addresses: [192.168.1.1/25]
+      addresses: [192.168.1.128/25]
     br-int:
       dhcp4: no
       interfaces: []
