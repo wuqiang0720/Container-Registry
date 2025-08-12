@@ -1,0 +1,43 @@
+services:
+  calico-etcd:
+    image: ghcr.io/wuqiang0720/etcd
+    container_name: calico-etcd
+    network_mode: host
+    environment:
+      - ETCDCTL_API=3
+      - ALLOW_NONE_AUTHENTICATION=yes
+      - ETCD_DATA_DIR=/etcd-data
+      - ETCD_NAME=etcd
+      - ETCD_ADVERTISE_CLIENT_URLS=http://0.0.0.0:2379
+      - ETCD_LISTEN_CLIENT_URLS=http://0.0.0.0:2379
+    healthcheck:
+      test: ["CMD", "etcdctl", "--endpoints=http://127.0.0.1:2379", "endpoint", "health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+  calico-node:
+    image: ghcr.io/wuqiang0720/calico
+    container_name: calico-node
+    privileged: true
+    volumes:
+      - /var/run/calico:/var/run/calico
+      - /lib/modules:/lib/modules:ro
+      - /opt/cni/bin:/opt/cni/bin
+      - /var/lib/calico:/var/lib/calico
+    environment:
+      - DATASTORE_TYPE=etcdv3
+      - ETCD_ENDPOINTS=http://127.0.0.1:2379
+      - IP=autodetect
+      - CALICO_NETWORKING_BACKEND=bird
+      - CALICO_LIBNETWORK_ENABLED=true
+    depends_on:
+      - calico-etcd
+    restart: unless-stopped
+    network_mode: host
+    healthcheck:
+      test: ["CMD-SHELL", "calico-node -show-status | grep -q '| true  |'"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
