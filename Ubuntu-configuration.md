@@ -1,6 +1,12 @@
 ```bash
 apt install -y sssd sssd-ldap libnss-sss libpam-sss ldap-utils sudo-ldap openvswitch-switch
 
+docker network create -d macvlan \
+  --subnet=192.168.1.0/24 \
+  --gateway=192.168.1.1 \
+  -o parent=br-int \
+  macvlan_net
+
 cat <<EOF > /etc/netplan/50-cloud-init.yaml
 network:
   version: 2
@@ -15,14 +21,6 @@ network:
       routes:
         - to: 0.0.0.0/0
           via: 192.168.125.1
-
-  bridges:
-    br_prv:
-      addresses: [192.168.1.1/25]
-      addresses: [192.168.1.128/25]
-    br-int:
-      dhcp4: no
-      interfaces: []
 EOF
 
 cat <<EOF >  /etc/sssd/sssd.conf
