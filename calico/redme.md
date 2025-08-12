@@ -1,4 +1,4 @@
-
+```bash
 nsenter -n -t $(docker inspect -f '{{.State.Pid}}' mariadb-node1) ip addr show
 nsenter -n -t $(docker inspect -f '{{.State.Pid}}' calico-ubuntu) ip addr show
 
@@ -24,3 +24,4 @@ spec:
   disabled: false
   nodeSelector: "all()"
 EOF
+```
