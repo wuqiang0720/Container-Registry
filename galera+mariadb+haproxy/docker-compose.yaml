@@ -2,7 +2,7 @@ services:
   mariadb-node1:
     image: ghcr.io/wuqiang0720/mariadb-galera:10.5data
     container_name: mariadb-node1
-    restart: always
+    restart: on-failure
     networks:
       macvlan_net:
         ipv4_address: 192.168.1.121
@@ -15,6 +15,7 @@ services:
       - MARIADB_GALERA_MARIABACKUP_PASSWORD=backup123
       - MARIADB_GALERA_CLUSTER_BOOTSTRAP=yes
       - MARIADB_GALERA_FORCE_SAFETOBOOTSTRAP=yes
+
     volumes:
       - mariadb_data1:/bitnami/mariadb
     healthcheck:
@@ -26,7 +27,7 @@ services:
   mariadb-node2:
     image: ghcr.io/wuqiang0720/mariadb-galera:10.5data
     container_name: mariadb-node2
-    restart: always
+    restart: on-failure
     networks:
       macvlan_net:
         ipv4_address: 192.168.1.122
@@ -48,7 +49,7 @@ services:
   mariadb-node3:
     image: ghcr.io/wuqiang0720/mariadb-galera:10.5data
     container_name: mariadb-node3
-    restart: always
+    restart: on-failure
     networks:
       macvlan_net:
         ipv4_address: 192.168.1.123
@@ -67,7 +68,7 @@ services:
       timeout: 5s
       retries: 6
 
-  haproxy:
+  mariadb-haproxy:
     image: ghcr.io/wuqiang0720/haproxy:mariadb
     container_name: mariadb-haproxy
     restart: always
@@ -84,16 +85,14 @@ services:
       timeout: 5s
       retries: 6
 
-  phpmyadmin:
+  mariadb-phpadmin:
     image: ghcr.io/wuqiang0720/phpmyadmin:latest
-    container_name: mariadb-phpmyadmin
+    container_name: mariadb-phpadmin
     restart: always
     environment:
       PMA_HOST: 192.168.1.124
       PMA_PORT: 3306
       MYSQL_ROOT_PASSWORD: 123456
-    depends_on:
-      - haproxy
     networks:
       macvlan_net:
         ipv4_address: 192.168.1.125
@@ -105,14 +104,7 @@ services:
 
 networks:
   macvlan_net:
-    driver: macvlan
-    driver_opts:
-      parent: br-int
-    ipam:
-      config:
-        - subnet: 192.168.1.112/28
-          gateway: 192.168.1.126
-
+    external: true
 volumes:
   mariadb_data1:
   mariadb_data2:
