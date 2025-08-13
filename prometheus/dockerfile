@@ -1,0 +1,5 @@
+FROM ghcr.io/wuqiang0720/alpine:3.20
+RUN apk add --no-cache collectd collectd-disk collectd-write_prometheus
+COPY collectd.conf /etc/collectd/collectd.conf
+RUN mkdir -p /var/lib/collectd /var/run
+CMD ["collectd", "-f"]
