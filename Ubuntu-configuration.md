@@ -7,22 +7,6 @@ docker network create -d macvlan \
   -o parent=br-int \
   macvlan_net
 
-cat <<EOF > /etc/netplan/50-cloud-init.yaml
-network:
-  version: 2
-  renderer: networkd
-  ethernets:
-    eth0:
-      addresses: [192.168.125.100/24]
-      nameservers:
-        addresses:
-          - 8.8.8.8
-          - 8.8.4.4
-      routes:
-        - to: 0.0.0.0/0
-          via: 192.168.125.1
-EOF
-
 cat <<EOF >  /etc/sssd/sssd.conf
 [sssd]
 config_file_version = 2
