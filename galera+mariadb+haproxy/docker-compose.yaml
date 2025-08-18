@@ -45,7 +45,9 @@ services:
       interval: 15s
       timeout: 5s
       retries: 6
-
+    depends_on:
+      mariadb-node1:
+        condition: service_healthy
   mariadb-node3:
     image: ghcr.io/wuqiang0720/mariadb-galera:10.5data
     container_name: mariadb-node3
@@ -67,15 +69,14 @@ services:
       interval: 15s
       timeout: 5s
       retries: 6
+    depends_on:
+      mariadb-node1:
+        condition: service_healthy
 
   mariadb-haproxy:
     image: ghcr.io/wuqiang0720/haproxy:mariadb
     container_name: mariadb-haproxy
     restart: always
-    depends_on:
-      - mariadb-node1
-      - mariadb-node2
-      - mariadb-node3
     networks:
       macvlan_net:
         ipv4_address: 192.168.1.124
@@ -101,6 +102,9 @@ services:
       interval: 15s
       timeout: 5s
       retries: 6
+    depends_on:
+      mariadb-haproxy:
+        condition: service_healthy
 
 networks:
   macvlan_net:
