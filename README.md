@@ -1,5 +1,6 @@
 [Generate Tokens](https://github.com/settings/tokens/)
 
+git clone https://github.com/wuqiang0720/Container-Registry.git
 # 我的 Docker 镜像集合
 
 ## 📦 镜像列表
