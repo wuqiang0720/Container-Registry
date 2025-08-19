@@ -55,4 +55,20 @@ ovs-vsctl add-port br_prv phy-br_prv \
   -- set interface phy-br_prv type=patch options:peer=int-br_prv
 netplan apply
 
+cat <<EOF > /etc/systemd/system/br_prv.service
+[Unit]
+Description=Bring up br_prv and br-int at boot
+After=network-online.target
+Wants=network-online.target
+[Service]
+Type=oneshot
+ExecStart=/bin/bash -c '\
+    ip link set br_prv up; \
+    ip addr show br_prv | grep -q "192.168.1.1" || ip addr add 192.168.1.1/24 dev br_prv; \
+    ip link set br-int up \
+'
+RemainAfterExit=yes
+[Install]
+WantedBy=multi-user.target
+EOF
 ```
