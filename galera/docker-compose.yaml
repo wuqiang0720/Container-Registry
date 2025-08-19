@@ -85,6 +85,10 @@ services:
       interval: 15s
       timeout: 5s
       retries: 6
+    depends_on:
+      - mariadb-node1
+      - mariadb-node2
+      - mariadb-node3
 
   mariadb-phpadmin:
     image: ghcr.io/wuqiang0720/phpmyadmin:latest
