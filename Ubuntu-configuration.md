@@ -1,5 +1,9 @@
 ```bash
-apt install -y sssd sssd-ldap libnss-sss libpam-sss ldap-utils sudo-ldap openvswitch-switch
+apt install -y sssd sssd-ldap libnss-sss libpam-sss ldap-utils sudo-ldap openvswitch-switch docker.io docker-compose
+
+
+systemctl start openvswitch-switch
+systemctl enable  openvswitch-switch
 
 docker network create -d macvlan \
   --subnet=192.168.1.0/24 \
