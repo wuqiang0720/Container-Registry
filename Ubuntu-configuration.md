@@ -44,6 +44,8 @@ RemainAfterExit=yes
 WantedBy=multi-user.target
 EOF
 
+systemctl start br_prv
+systemctl enable br_prv
 
 cat <<EOF >  /etc/sssd/sssd.conf
 [sssd]
