@@ -1,6 +1,16 @@
 [Generate Tokens](https://github.com/settings/tokens/)
 
-`git clone --recursive git@github.com:wuqiang0720/Container-Registry.git`
+```git clone --recursive git@github.com:wuqiang0720/Container-Registry.git
+cd Container-Registry/
+git remote -v
+git config --global user.email "wuqiang0720@126.com"
+ssh-keygen -t ed25519 -C "wuqiang0720@126.com
+cat /root/.ssh/id_ed25519.pub   然后把输出的公钥复制到 GitHub → Settings → SSH and GPG keys → New SSH key
+
+git add .
+git commit -m "你的提交信息"
+git push origin main
+```
 # 我的 Docker 镜像集合
 
 ## 📦 镜像列表
