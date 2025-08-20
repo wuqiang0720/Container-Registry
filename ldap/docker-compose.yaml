@@ -21,7 +21,7 @@ services:
     container_name: openldap-phpadmin
     environment:
       PHPLDAPADMIN_HTTPS: "false"
-      PHPLDAPADMIN_LDAP_HOSTS: openldap
+      PHPLDAPADMIN_LDAP_HOSTS: openldap-server
     depends_on:
       - openldap
     restart: unless-stopped
