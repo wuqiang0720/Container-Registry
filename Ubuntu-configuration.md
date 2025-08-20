@@ -2,24 +2,8 @@
 
 apt update && apt install -y sssd sssd-ldap libnss-sss libpam-sss ldap-utils sudo-ldap openvswitch-switch docker.io docker-compose
 
-
 systemctl start openvswitch-switch docker
 systemctl enable  openvswitch-switch docker
-
-
-
-
-ovs-vsctl add-br br-int -- set bridge br-int datapath_type=system
-ovs-vsctl add-br br_prv -- set bridge br_prv datapath_type=system
-
-
-
-ovs-vsctl add-port br-int int-br_prv \
-  -- set interface int-br_prv type=patch options:peer=phy-br_prv
-
-
-ovs-vsctl add-port br_prv phy-br_prv \
-  -- set interface phy-br_prv type=patch options:peer=int-br_prv
 
 docker network create -d macvlan \
   --subnet=192.168.1.0/24 \
@@ -27,25 +11,29 @@ docker network create -d macvlan \
   -o parent=br-int \
   macvlan_net
 
-cat <<EOF > /etc/systemd/system/br_prv.service
+cat <<EOF > /etc/systemd/system/ovs-br.service
+
 [Unit]
 Description=Bring up br_prv and br-int at boot
-After=network-online.target
-Wants=network-online.target
+After=network-online.target openvswitch-switch.service
+Wants=network-online.target openvswitch-switch.service
 [Service]
 Type=oneshot
-ExecStart=/bin/bash -c '\
-    ip link set br_prv up; \
-    ip addr show br_prv | grep -q "192.168.1.1" || ip addr add 192.168.1.1/24 dev br_prv; \
-    ip link set br-int up \
-'
+ExecStart=/usr/bin/ovs-vsctl --may-exist add-br br-int -- set bridge br-int datapath_type=system
+ExecStart=/usr/bin/ovs-vsctl --may-exist add-br br_prv -- set bridge br_prv datapath_type=system
+ExecStart=/usr/bin/ovs-vsctl --may-exist add-port br-int int-br_prv -- set interface int-br_prv type=patch options:peer=phy-br_prv
+ExecStart=/usr/bin/ovs-vsctl --may-exist add-port br_prv phy-br_prv -- set interface phy-br_prv type=patch options:peer=int-br_prv
+ExecStart=/usr/sbin/ip link set br_prv up
+ExecStart=/usr/sbin/ip link set br-int up
+ExecStart=/bin/sh -c "ip addr show dev br_prv | grep -q 192.168.1.1/24 || ip addr add 192.168.1.1/24 dev br_prv"
 RemainAfterExit=yes
+
 [Install]
 WantedBy=multi-user.target
 EOF
 
-systemctl start br_prv
-systemctl enable br_prv
+systemctl start ovs-br
+systemctl enable ovs-br
 
 cat <<EOF >  /etc/sssd/sssd.conf
 [sssd]
