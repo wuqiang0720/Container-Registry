@@ -1,6 +1,7 @@
 [Generate Tokens](https://github.com/settings/tokens/)
 
-```git clone --recursive git@github.com:wuqiang0720/Container-Registry.git
+```bash
+git clone --recursive git@github.com:wuqiang0720/Container-Registry.git
 cd Container-Registry/
 git remote -v
 git config --global user.email "wuqiang0720@126.com"
