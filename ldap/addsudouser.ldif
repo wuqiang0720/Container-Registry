@@ -19,7 +19,9 @@ uid: ubuntu
 sn: Wu
 cn: ubuntu
 uidNumber: 10000
-gidNumber: 0
+gidNumber: 10000
 homeDirectory: /home/ubuntu
 loginShell: /bin/bash
 userPassword: ubuntu
+
+#ldapadd -x -H ldap://openldap-server -D cn=admin,dc=HDS8000,dc=ERICSSON,dc=COM -W -f addsudouser.ldif
