@@ -6,11 +6,7 @@ apt update && apt install -y sssd sssd-ldap libnss-sss libpam-sss ldap-utils sud
 systemctl start openvswitch-switch docker
 systemctl enable  openvswitch-switch docker
 
-docker network create -d macvlan \
-  --subnet=192.168.1.0/24 \
-  --gateway=192.168.1.1 \
-  -o parent=br-int \
-  macvlan_net
+
 
 cat <<EOF >  /etc/sssd/sssd.conf
 [sssd]
@@ -58,7 +54,12 @@ ovs-vsctl add-port br-int int-br_prv \
 
 ovs-vsctl add-port br_prv phy-br_prv \
   -- set interface phy-br_prv type=patch options:peer=int-br_prv
-netplan apply
+
+docker network create -d macvlan \
+  --subnet=192.168.1.0/24 \
+  --gateway=192.168.1.1 \
+  -o parent=br-int \
+  macvlan_net
 
 cat <<EOF > /etc/systemd/system/br_prv.service
 [Unit]
