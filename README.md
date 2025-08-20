@@ -25,7 +25,7 @@ git push origin main
 
 ### 2. ldap+PHPadmin 
   ```bash
-  root@ubuntu:~# docker-compose -f ~/Container-Registry/LDAP+PHPadmin/docker-compose.yaml up -d
+  root@ubuntu:~# docker-compose -f ~/Container-Registry/ldap/docker-compose.yaml up -d
   Creating volume "ldapphpadmin_openldap_data" with default driver
   Creating volume "ldapphpadmin_openldap_conf" with default driver
   Creating volume "ldapphpadmin_phpldapadmin_data" with default driver
