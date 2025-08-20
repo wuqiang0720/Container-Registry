@@ -6,7 +6,6 @@ systemctl start openvswitch-switch docker
 systemctl enable  openvswitch-switch docker
 
 cat <<EOF > /etc/systemd/system/ovs-br.service
-
 [Unit]
 Description=Bring up br_prv and br-int at boot
 After=network-online.target openvswitch-switch.service
@@ -20,8 +19,8 @@ ExecStart=/usr/bin/ovs-vsctl --may-exist add-port br_prv phy-br_prv -- set inter
 ExecStart=/usr/sbin/ip link set br_prv up
 ExecStart=/usr/sbin/ip link set br-int up
 ExecStart=/bin/sh -c "ip addr show dev br_prv | grep -q 192.168.1.1/24 || ip addr add 192.168.1.1/24 dev br_prv"
+ExecStart=/bin/bash -c 'docker network inspect macvlan_net >/dev/null 2>&1 || docker network create -d macvlan --subnet=192.168.1.0/24 --gateway=192.168.1.1 -o parent=br-int macvlan_net'
 RemainAfterExit=yes
-
 [Install]
 WantedBy=multi-user.target
 EOF
@@ -29,11 +28,6 @@ EOF
 systemctl start ovs-br
 systemctl enable ovs-br
 
-docker network create -d macvlan \
-  --subnet=192.168.1.0/24 \
-  --gateway=192.168.1.1 \
-  -o parent=br-int \
-  macvlan_net
 cp ~/Container-Registry/ldap/sssd.conf /etc/sssd/sssd.conf
 cp ~/Container-Registry/ldap/sudo-ldap.conf /etc/sudo-ldap.conf
 
