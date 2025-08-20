@@ -5,12 +5,6 @@ apt update && apt install -y sssd sssd-ldap libnss-sss libpam-sss ldap-utils sud
 systemctl start openvswitch-switch docker
 systemctl enable  openvswitch-switch docker
 
-docker network create -d macvlan \
-  --subnet=192.168.1.0/24 \
-  --gateway=192.168.1.1 \
-  -o parent=br-int \
-  macvlan_net
-
 cat <<EOF > /etc/systemd/system/ovs-br.service
 
 [Unit]
@@ -34,6 +28,12 @@ EOF
 
 systemctl start ovs-br
 systemctl enable ovs-br
+
+docker network create -d macvlan \
+  --subnet=192.168.1.0/24 \
+  --gateway=192.168.1.1 \
+  -o parent=br-int \
+  macvlan_net
 
 cat <<EOF >  /etc/sssd/sssd.conf
 [sssd]
