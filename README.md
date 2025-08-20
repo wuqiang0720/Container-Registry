@@ -1,4 +1,5 @@
 [Generate Tokens](https://github.com/settings/tokens/)
+[OS Configuration](https://github.com/wuqiang0720/Container-Registry/blob/main/Ubuntu-configuration.md)
 
 ```bash
 git clone --recursive git@github.com:wuqiang0720/Container-Registry.git
