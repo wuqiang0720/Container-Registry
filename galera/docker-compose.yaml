@@ -5,13 +5,13 @@ services:
     restart: on-failure
     networks:
       macvlan_net:
-        ipv4_address: 192.168.1.121
+        ipv4_address: 192.168.1.4
     environment:
       - MARIADB_ROOT_PASSWORD=123456
       - MARIADB_GALERA_CLUSTER_NAME=galera-cluster
-      - MARIADB_GALERA_CLUSTER_ADDRESS=gcomm://192.168.1.121,192.168.1.122,192.168.1.123
+      - MARIADB_GALERA_CLUSTER_ADDRESS=gcomm://192.168.1.4,192.168.1.5,192.168.1.6
       - MARIADB_GALERA_NODE_NAME=node1
-      - MARIADB_GALERA_NODE_ADDRESS=192.168.1.121
+      - MARIADB_GALERA_NODE_ADDRESS=192.168.1.4
       - MARIADB_GALERA_MARIABACKUP_PASSWORD=backup123
       - MARIADB_GALERA_CLUSTER_BOOTSTRAP=yes
       - MARIADB_GALERA_FORCE_SAFETOBOOTSTRAP=yes
@@ -30,13 +30,13 @@ services:
     restart: on-failure
     networks:
       macvlan_net:
-        ipv4_address: 192.168.1.122
+        ipv4_address: 192.168.1.5
     environment:
       - MARIADB_ROOT_PASSWORD=123456
       - MARIADB_GALERA_CLUSTER_NAME=galera-cluster
-      - MARIADB_GALERA_CLUSTER_ADDRESS=gcomm://192.168.1.121,192.168.1.122,192.168.1.123
+      - MARIADB_GALERA_CLUSTER_ADDRESS=gcomm://192.168.1.4,192.168.1.5,192.168.1.6
       - MARIADB_GALERA_NODE_NAME=node2
-      - MARIADB_GALERA_NODE_ADDRESS=192.168.1.122
+      - MARIADB_GALERA_NODE_ADDRESS=192.168.1.5
       - MARIADB_GALERA_MARIABACKUP_PASSWORD=backup123
     volumes:
       - mariadb_data2:/bitnami/mariadb
@@ -54,13 +54,13 @@ services:
     restart: on-failure
     networks:
       macvlan_net:
-        ipv4_address: 192.168.1.123
+        ipv4_address: 192.168.1.6
     environment:
       - MARIADB_ROOT_PASSWORD=123456
       - MARIADB_GALERA_CLUSTER_NAME=galera-cluster
-      - MARIADB_GALERA_CLUSTER_ADDRESS=gcomm://192.168.1.121,192.168.1.122,192.168.1.123
+      - MARIADB_GALERA_CLUSTER_ADDRESS=gcomm://192.168.1.4,192.168.1.5,192.168.1.6
       - MARIADB_GALERA_NODE_NAME=node3
-      - MARIADB_GALERA_NODE_ADDRESS=192.168.1.123
+      - MARIADB_GALERA_NODE_ADDRESS=192.168.1.6
       - MARIADB_GALERA_MARIABACKUP_PASSWORD=backup123
     volumes:
       - mariadb_data3:/bitnami/mariadb
@@ -79,7 +79,7 @@ services:
     restart: always
     networks:
       macvlan_net:
-        ipv4_address: 192.168.1.124
+        ipv4_address: 192.168.1.7
     healthcheck:
       test: ["CMD-SHELL", "timeout 5 bash -c ':> /dev/tcp/127.0.0.1/3306' || exit 1"]
       interval: 15s
@@ -95,12 +95,12 @@ services:
     container_name: mariadb-phpadmin
     restart: always
     environment:
-      PMA_HOST: 192.168.1.124
+      PMA_HOST: 192.168.1.7
       PMA_PORT: 3306
       MYSQL_ROOT_PASSWORD: 123456
     networks:
       macvlan_net:
-        ipv4_address: 192.168.1.125
+        ipv4_address: 192.168.1.8
     healthcheck:
       test: ["CMD-SHELL", "timeout 5 bash -c ':> /dev/tcp/127.0.0.1/80' || exit 1"]
       interval: 15s

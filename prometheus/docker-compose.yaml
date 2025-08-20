@@ -22,7 +22,7 @@ services:
       - /sys:/host/sys:ro
     networks:
       macvlan_net:
-        ipv4_address: 192.168.1.12
+        ipv4_address: 192.168.1.10
     healthcheck:
       test: ["CMD", "pgrep", "collectd"]
       interval: 30s
@@ -38,7 +38,7 @@ services:
       - prometheus_data:/prometheus
     networks:
       macvlan_net:
-        ipv4_address: 192.168.1.10
+        ipv4_address: 192.168.1.11
     healthcheck:
       test: ["CMD", "pgrep", "prometheus"]
       interval: 30s
