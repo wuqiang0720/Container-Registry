@@ -1,7 +1,7 @@
 services:
   openldap:
     image: ghcr.io/wuqiang0720/openldap:latest
-    container_name: openldap
+    container_name: openldap-server
     volumes:
       - openldap_data:/var/lib/ldap
       - openldap_conf:/etc/ldap/slapd.d
