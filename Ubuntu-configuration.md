@@ -37,5 +37,13 @@ echo "session required pam_mkhomedir.so skel=/etc/skel/ umask=0022" >> /etc/pam.
 
 systemctl restart sssd
 
+# 允许 br_prv 到外网接口的转发
+iptables -A FORWARD -i br_prv -o eth0 -j ACCEPT
+
+# 允许外网接口返回流量到 br_prv
+iptables -A FORWARD -i eth0 -o br_prv -m state --state ESTABLISHED,RELATED -j ACCEPT
+
+# 然后确认 NAT 规则正确：
+iptables -t nat -A POSTROUTING -s 192.168.1.0/24 -o eth0 -j MASQUERADE
 
 ```
