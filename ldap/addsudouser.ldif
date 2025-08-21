@@ -1,8 +1,16 @@
-dn: cn=Operations,ou=groups,dc=HDS8000,dc=ERICSSON,dc=COM
-cn: Operations
-description: Operations group
+dn: cn=Ubuntu,ou=groups,dc=HDS8000,dc=ERICSSON,dc=COM
+cn: ubuntu
+description: Ubuntu group
 gidnumber: 10000
 objectclass: posixGroup
+
+dn: cn=root,ou=groups,dc=HDS8000,dc=ERICSSON,dc=COM
+objectClass: top
+objectClass: posixGroup
+cn: root
+gidNumber: 0
+memberUid: ubuntu
+
 
 dn: cn=ubuntu,ou=Sudoers,dc=HDS8000,dc=ERICSSON,dc=com
 objectClass: top

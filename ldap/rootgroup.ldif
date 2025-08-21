@@ -1,0 +1,4 @@
+dn: cn=root,ou=groups,dc=HDS8000,dc=ERICSSON,dc=COM
+cn: root
+gidNumber: 0
+objectClass: posixGroup
