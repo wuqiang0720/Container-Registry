@@ -1,0 +1,7 @@
+FROM ghcr.io/wuqiang0720/suse/sle15:15.5
+
+RUN zypper install -y --no-recommends \
+        iproute2 \
+        iputils \
+    && zypper clean --all
+
