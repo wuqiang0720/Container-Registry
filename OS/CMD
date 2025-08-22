@@ -1,0 +1,1 @@
+docker run -dit --name suse15.5 --network macvlan_net ghcr.io/wuqiang0720/suse/sle15:15.5

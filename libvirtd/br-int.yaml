@@ -1,0 +1,6 @@
+<network>
+  <name>br-int</name>
+  <forward mode='bridge'/>
+  <bridge name='br-int'/>
+</network>
+
