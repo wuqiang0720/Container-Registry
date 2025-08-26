@@ -1,0 +1,133 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+
+import os
+import sys
+import json
+import subprocess
+from flask import Flask, request, jsonify
+
+app = Flask(__name__)
+@app.before_request
+def log_request():
+    try:
+        data = request.get_json(force=True)
+    except Exception:
+        data = request.get_data()
+    print(f"\n=== Docker Request ===")
+    print(f"Path: {request.path}")
+    print(f"Method: {request.method}")
+    print(f"Headers: {dict(request.headers)}")
+    print(f"Body: {data}")
+    print("====================\n")
+# -------------------------
+# 网桥名称，可通过环境变量覆盖
+OVS_BRIDGE = os.environ.get("OVS_BRIDGE", "br-int")
+
+def sh(cmd):
+    """执行 shell 命令"""
+    r = subprocess.run(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+    if r.returncode != 0:
+        print(f"[ERROR] {cmd} -> {r.stderr.strip()}", file=sys.stderr)
+    return r
+
+# -------------------------------
+# 插件 API
+# -------------------------------
+
+@app.route("/Plugin.Activate", methods=["POST"])
+def plugin_activate():
+    return jsonify({"Implements": ["NetworkDriver"]})
+
+@app.route("/NetworkDriver.GetCapabilities", methods=["POST"])
+def get_cap():
+    return jsonify({"Scope": "local"})
+
+@app.route("/NetworkDriver.CreateNetwork", methods=["POST"])
+def create_network():
+    data = request.get_json(force=True)
+    # 确保网桥存在
+    r = sh(["ovs-vsctl", "br-exists", OVS_BRIDGE])
+    if r.returncode != 0:
+        sh(["ovs-vsctl", "add-br", OVS_BRIDGE])
+        sh(["ip", "link", "set", OVS_BRIDGE, "up"])
+    return jsonify({})
+
+@app.route("/NetworkDriver.DeleteNetwork", methods=["POST"])
+def delete_network():
+    return jsonify({})
+
+@app.route("/NetworkDriver.CreateEndpoint", methods=["POST"])
+def create_endpoint():
+    data = request.get_json(force=True)
+    eid = data.get("EndpointID", "")[:12]
+    host_if = f"tap{eid[:7]}h"
+    cont_if = f"tap{eid[:7]}c"
+
+    # 创建 tap pair
+    sh(["ip", "link", "add", host_if, "type", "tap", "peer", "name", cont_if])
+    # host 侧加入 OVS
+    sh(["ip", "link", "set", host_if, "up"])
+    sh(["ovs-vsctl", "add-port", OVS_BRIDGE, host_if])
+
+    return jsonify({
+        "Interface": {"SrcName": cont_if, "DstPrefix": "eth"},
+        "Err": ""
+    })
+
+@app.route("/NetworkDriver.DeleteEndpoint", methods=["POST"])
+def delete_endpoint():
+    data = request.get_json(force=True)
+    eid = data.get("EndpointID", "")[:12]
+    host_if = f"tap{eid[:7]}h"
+
+    sh(["ovs-vsctl", "--if-exists", "del-port", OVS_BRIDGE, host_if])
+    sh(["ip", "link", "del", host_if])
+    return jsonify({})
+
+@app.route("/NetworkDriver.Join", methods=["POST"])
+def join():
+    return jsonify({
+        "InterfaceName": {"SrcName": "", "DstPrefix": "eth"},
+        "Err": ""
+    })
+
+@app.route("/NetworkDriver.Leave", methods=["POST"])
+def leave():
+    return jsonify({"Err": ""})
+
+@app.route("/NetworkDriver.EndpointOperInfo", methods=["POST"])
+def endpoint_oper_info():
+    return jsonify({"Err": ""})
+
+# -------------------------------
+# 启动插件服务
+# -------------------------------
+
+def run_server():
+    sock_dir = "/run/docker/plugins"
+    os.makedirs(sock_dir, exist_ok=True)
+    sock_path = os.path.join(sock_dir, "ovs.sock")
+
+    # 删除已有 socket
+    try:
+        os.remove(sock_path)
+    except FileNotFoundError:
+        pass
+
+    # 使用内置 Werkzeug + socket
+    from werkzeug.serving import make_server
+    import socket
+
+    sock = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
+    sock.bind(sock_path)
+    sock.listen(1)
+    os.chmod(sock_path, 0o666)  # 确保 docker 可以访问
+
+    server = make_server("", 0, app, threaded=True, fd=sock.fileno())
+    print(f"OVS Docker plugin listening on {sock_path}")
+    server.serve_forever()
+
+if __name__ == "__main__":
+    run_server()
+

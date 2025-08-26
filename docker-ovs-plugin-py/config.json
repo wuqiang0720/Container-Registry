@@ -1,0 +1,36 @@
+{
+  "Name": "ovs-plugin",
+  "Description": "OVS Docker Network Plugin (Python)",
+  "Documentation": "https://example.invalid/ovs-plugin",
+  "Interface": {
+    "Socket": "ovs.sock",
+    "Types": ["docker.networkdriver/1.0"]
+  },
+  "Implements":["NetworkDriver"],
+  "Entrypoint": ["/ovs_docker_plugin.py"],
+  "WorkDir": "/",
+  "Network": {
+    "Type": "host"
+  },
+  "Mounts": [
+    {
+      "Type": "bind",
+      "Source": "/var/run/openvswitch",
+      "Destination": "/var/run/openvswitch",
+      "Options": ["rbind"]
+    },
+    {
+      "Type": "bind",
+      "Source": "/run/docker/plugins",
+      "Destination": "/run/docker/plugins",
+      "Options": ["rbind"]
+    }
+  ],
+  "Env": [],
+  "Args": {},
+  "Devices": [],
+  "Linux": {
+    "Capabilities": ["NET_ADMIN", "NET_RAW"]
+  }
+}
+

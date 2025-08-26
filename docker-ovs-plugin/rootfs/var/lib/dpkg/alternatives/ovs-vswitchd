@@ -1,6 +1,0 @@
-auto
-/usr/sbin/ovs-vswitchd
-
-/usr/lib/openvswitch-switch/ovs-vswitchd
-100
-
