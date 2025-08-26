@@ -1,0 +1,17 @@
+a6c02ed692e2e4bdd2326c51dc3cf9ad  usr/bin/uuidgen
+2bc467b76cf15c7182648bde45196b8a  usr/bin/uuidparse
+edbf94a22a0777f03be3e8b7006690e5  usr/lib/systemd/system/uuidd.service
+899cf46868c9ccdbc21489d27ac59bce  usr/lib/systemd/system/uuidd.socket
+b10b85974119c0ec37ad35b44f53ba5f  usr/lib/sysusers.d/uuidd-sysusers.conf
+f5dae9ad751e8db75181ec749eef621c  usr/lib/tmpfiles.d/uuidd-tmpfiles.conf
+05cd173a364a9de1c618b980078e08f3  usr/sbin/uuidd
+535cf39716afb4f68a61d2b6e3acf651  usr/share/bash-completion/completions/uuidd
+d4a59a218dd7d377f3a6ce09a0627765  usr/share/bash-completion/completions/uuidgen
+8bd8f1288bff3bcb9b3a306ebdbb589d  usr/share/bash-completion/completions/uuidparse
+1e30d61b028710436ab4de578d40b422  usr/share/doc/uuid-runtime/NEWS.Debian.gz
+8c4bb120a5bf8607855881dceef5ae89  usr/share/doc/uuid-runtime/changelog.Debian.gz
+13a1ae4e86572f916333207a508c485f  usr/share/doc/uuid-runtime/changelog.gz
+e2343d5239d28086275d9d5375c5a66f  usr/share/doc/uuid-runtime/copyright
+d98cd67ffbb5379d8351b6b12cd8f641  usr/share/man/man1/uuidgen.1.gz
+662bf23b420d9d95087811661668c7e6  usr/share/man/man1/uuidparse.1.gz
+387354e074db1f6265c472371b2c10e3  usr/share/man/man8/uuidd.8.gz

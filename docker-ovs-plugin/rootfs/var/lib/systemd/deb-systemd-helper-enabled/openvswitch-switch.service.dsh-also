@@ -1,0 +1,2 @@
+/etc/systemd/system/openvswitch-switch.service.requires/ovs-record-hostname.service
+/etc/systemd/system/multi-user.target.wants/openvswitch-switch.service

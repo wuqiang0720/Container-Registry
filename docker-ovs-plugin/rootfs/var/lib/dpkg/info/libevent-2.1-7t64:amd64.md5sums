@@ -1,0 +1,6 @@
+6f39a6b45506878bcabba6c4def5640b  usr/lib/x86_64-linux-gnu/libevent-2.1.so.7.0.1
+a8eb0e1077c891dcce947cf5612c8221  usr/share/doc/libevent-2.1-7t64/changelog.Debian.amd64.gz
+947a53ab20183d204cfefa426400e030  usr/share/doc/libevent-2.1-7t64/changelog.Debian.gz
+c8de4da804fc02821139ce040bb83e5e  usr/share/doc/libevent-2.1-7t64/changelog.gz
+4af7a062af180af2957c31fa1674f8e0  usr/share/doc/libevent-2.1-7t64/copyright
+6180b955858bead36dcc2c0042c705d6  usr/share/lintian/overrides/libevent-2.1-7t64
