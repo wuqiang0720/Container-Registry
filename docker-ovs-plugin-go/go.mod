@@ -3,7 +3,7 @@ module ovs-plugin
 go 1.21
 
 require (
-    github.com/docker/go-plugins-helpers v0.0.0
+    github.com/docker/go-plugins-helpers v0.2.1
     github.com/Microsoft/go-winio v0.0.0
     github.com/coreos/go-systemd/activation v0.0.0
     github.com/docker/go-connections/sockets v0.0.0
