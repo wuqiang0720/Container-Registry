@@ -1,76 +1,79 @@
 package main
 
 import (
-    "encoding/json"
-    "log"
-    "net/http"
-    "os"
-    "os/exec"
-    "net" 
-    "github.com/gorilla/mux"
+	"log"
+	"os"
+	"os/exec"
+
+	"github.com/docker/go-plugins-helpers/network"
 )
 
-const OVS_BRIDGE = "br0"
+const OVS_BRIDGE = "br-int"
 
+// Helper: 执行系统命令
 func sh(cmd ...string) {
-    out, err := exec.Command(cmd[0], cmd[1:]...).CombinedOutput()
-    if err != nil {
-        log.Printf("cmd %v failed: %v, output: %s", cmd, err, out)
-    }
+	out, err := exec.Command(cmd[0], cmd[1:]...).CombinedOutput()
+	if err != nil {
+		log.Printf("cmd %v failed: %v, output: %s", cmd, err, out)
+	}
 }
 
-func createNetwork(w http.ResponseWriter, r *http.Request) {
-    data := map[string]interface{}{}
-    _ = json.NewDecoder(r.Body).Decode(&data)
-    w.Header().Set("Content-Type", "application/json")
-    json.NewEncoder(w).Encode(map[string]interface{}{})
+// OVSNetworkDriver 实现 Docker NetworkDriver 接口
+type OVSNetworkDriver struct{}
+
+func (d *OVSNetworkDriver) GetCapabilities() (*network.CapabilitiesResponse, error) {
+	return &network.CapabilitiesResponse{Scope: "local"}, nil
 }
 
-func createEndpoint(w http.ResponseWriter, r *http.Request) {
-    data := map[string]interface{}{}
-    _ = json.NewDecoder(r.Body).Decode(&data)
-    eid, ok := data["EndpointID"].(string)
-    if !ok {
-        eid = "tmpid"
-    }
-    host_if := "tap" + eid[:7] + "h"
-    cont_if := "tap" + eid[:7] + "c"
+func (d *OVSNetworkDriver) CreateNetwork(r *network.CreateNetworkRequest) error {
+	log.Printf("CreateNetwork: %+v\n", r)
+	return nil
+}
 
-    // 创建 tap pair
-    sh("ip", "link", "add", host_if, "type", "tap", "peer", "name", cont_if)
-    sh("ip", "link", "set", host_if, "up")
-    sh("ovs-vsctl", "add-port", OVS_BRIDGE, host_if)
+func (d *OVSNetworkDriver) DeleteNetwork(r *network.DeleteNetworkRequest) error {
+	log.Printf("DeleteNetwork: %+v\n", r)
+	return nil
+}
 
-    resp := map[string]interface{}{
-        "Interface": map[string]string{
-            "SrcName": cont_if,
-            "DstPrefix": "eth",
-        },
-        "Err": "",
-    }
-    w.Header().Set("Content-Type", "application/json")
-    json.NewEncoder(w).Encode(resp)
+func (d *OVSNetworkDriver) CreateEndpoint(r *network.CreateEndpointRequest) (*network.CreateEndpointResponse, error) {
+	log.Printf("CreateEndpoint: %+v\n", r)
+
+	eid := r.EndpointID
+	hostIf := "tap" + eid[:7] + "h"
+	contIf := "tap" + eid[:7] + "c"
+
+	// 创建 tap pair 并加入 OVS 桥
+	sh("ip", "link", "add", hostIf, "type", "tap", "peer", "name", contIf)
+	sh("ip", "link", "set", hostIf, "up")
+	sh("ovs-vsctl", "add-port", OVS_BRIDGE, hostIf)
+
+	return &network.CreateEndpointResponse{
+		Interface: &network.EndpointInterface{
+			SrcName:   contIf,
+			DstPrefix: "eth",
+		},
+	}, nil
+}
+
+func (d *OVSNetworkDriver) DeleteEndpoint(r *network.DeleteEndpointRequest) error {
+	log.Printf("DeleteEndpoint: %+v\n", r)
+	// 可自行删除 tap pair
+	return nil
 }
 
 func main() {
-    r := mux.NewRouter()
-    r.HandleFunc("/Plugin.Activate", func(w http.ResponseWriter, r *http.Request) {
-        json.NewEncoder(w).Encode(map[string]interface{}{
-            "Implements": []string{"NetworkDriver"},
-        })
-    }).Methods("POST")
+	driver := &OVSNetworkDriver{}
+	h := network.NewHandler(driver)
 
-    r.HandleFunc("/NetworkDriver.CreateNetwork", createNetwork).Methods("POST")
-    r.HandleFunc("/NetworkDriver.CreateEndpoint", createEndpoint).Methods("POST")
+	// Docker 插件 UNIX socket
+	socket := "/run/docker/plugins/ovs.sock"
+	if _, err := os.Stat(socket); err == nil {
+		os.Remove(socket)
+	}
+	log.Printf("Starting OVS Docker plugin on %s\n", socket)
 
-    sock := "/run/docker/plugins/ovs.sock"
-    os.Remove(sock)
-    listener, err := net.Listen("unix", sock)
-    if err != nil {
-        log.Fatal(err)
-    }
-    os.Chmod(sock, 0666)
-    log.Println("OVS Docker plugin listening on", sock)
-    http.Serve(listener, r)
+	if err := h.ServeUnix(socket, 0); err != nil {
+		log.Fatalf("Failed to serve unix socket: %v", err)
+	}
 }
 

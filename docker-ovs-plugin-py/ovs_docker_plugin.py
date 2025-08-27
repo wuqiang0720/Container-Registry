@@ -19,18 +19,18 @@ def sh(cmd):
 # --------------------------
 # 打印 Docker 发来的请求（调试用）
 @app.before_request
-def log_request():
+def before_request_hook():
+# 1. 修正 Content-Type
+    if request.content_type and request.content_type.startswith("application/vnd.docker.plugin"):
+        request.environ['CONTENT_TYPE'] = 'application/json'
+# 2. 打印请求信息
     try:
         data = request.get_json(force=True)
     except Exception:
-        data = request.get_data()
-    print("\n=== Docker Request ===")
-    print(f"Path: {request.path}")
-    print(f"Method: {request.method}")
+        data = request.get_data(as_text=True)
+    print(f"Method: {request.method}  Path: {request.path}")
     print(f"Headers: {dict(request.headers)}")
     print(f"Body: {data}")
-    print("====================\n")
-# --------------------------
 
 @app.route("/Plugin.Activate", methods=["POST"])
 def plugin_activate():
@@ -55,7 +55,11 @@ def delete_network():
 
 @app.route("/NetworkDriver.CreateEndpoint", methods=["POST"])
 def create_endpoint():
-    data = request.get_json(force=True)
+    try:
+        data = json.loads(request.get_data())
+    except Exception as e:
+        return f"Invalid JSON: {e}", 400
+  #  data = request.get_json(force=True)
     eid = data["EndpointID"][:12]
     host_if = f"tap{eid[:7]}h"
     cont_if = f"tap{eid[:7]}c"

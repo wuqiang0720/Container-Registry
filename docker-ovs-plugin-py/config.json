@@ -31,6 +31,7 @@
   "Devices": [],
   "Linux": {
     "Capabilities": ["NET_ADMIN", "NET_RAW"]
-  }
+  },
+  "Implements": ["NetworkDriver"]
 }
 
