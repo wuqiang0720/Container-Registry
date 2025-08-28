@@ -10,7 +10,7 @@ services:
       - ETCD_ADVERTISE_CLIENT_URLS=http://0.0.0.0:2379
       - ETCD_LISTEN_CLIENT_URLS=http://0.0.0.0:2379
     networks:
-      macvlan_net:
+      ovs-net:
         ipv4_address: 192.168.1.12
     healthcheck:
       test: ["CMD", "etcdctl", "--endpoints=http://127.0.0.1:2379", "endpoint", "health"]
@@ -37,7 +37,7 @@ services:
       - calico-etcd
     restart: unless-stopped
     networks:
-      macvlan_net:
+      ovs-net:
         ipv4_address: 192.168.1.13
     healthcheck:
       test: ["CMD-SHELL", "calico-node -show-status | grep -q '| true  |'"]
@@ -47,5 +47,5 @@ services:
       start_period: 10s
 
 networks:
-  macvlan_net:
+  ovs-net:
     external: true

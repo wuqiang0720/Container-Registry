@@ -9,21 +9,16 @@ import time
 
 app = Flask(__name__)
 
-# OVS 网桥名称，可通过环境变量覆盖
 OVS_BRIDGE = os.environ.get("OVS_BRIDGE", "br-int")
 
 def sh(cmd):
     """执行 shell 命令并返回结果"""
     return subprocess.run(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
 
-# --------------------------
-# 打印 Docker 发来的请求（调试用）
 @app.before_request
 def before_request_hook():
-# 1. 修正 Content-Type
     if request.content_type and request.content_type.startswith("application/vnd.docker.plugin"):
         request.environ['CONTENT_TYPE'] = 'application/json'
-# 2. 打印请求信息
     try:
         data = request.get_json(force=True)
     except Exception:
@@ -42,7 +37,6 @@ def get_cap():
 
 @app.route("/NetworkDriver.CreateNetwork", methods=["POST"])
 def create_network():
-    # 确保 OVS 网桥存在
     r = sh(["ovs-vsctl", "br-exists", OVS_BRIDGE])
     if r.returncode != 0:
         sh(["ovs-vsctl", "add-br", OVS_BRIDGE])
@@ -55,22 +49,52 @@ def delete_network():
 
 @app.route("/NetworkDriver.CreateEndpoint", methods=["POST"])
 def create_endpoint():
-    try:
-        data = json.loads(request.get_data())
-    except Exception as e:
-        return f"Invalid JSON: {e}", 400
-  #  data = request.get_json(force=True)
+    data = request.get_json(force=True)
     eid = data["EndpointID"][:12]
-    host_if = f"tap{eid[:7]}h"
-    cont_if = f"tap{eid[:7]}c"
+    host_if = f"veth{eid[:7]}h"
+    cont_if = f"veth{eid[:7]}c"
 
-    # 创建 tap pair
-    sh(["ip", "link", "add", host_if, "type", "tap", "peer", "name", cont_if])
+    # 创建 veth pair
+    sh(["ip", "link", "add", host_if, "type", "veth", "peer", "name", cont_if])
     sh(["ip", "link", "set", host_if, "up"])
+    # 只加到 OVS，不要 Docker 自带 bridge
     sh(["ovs-vsctl", "add-port", OVS_BRIDGE, host_if])
 
+    # 返回接口信息时不带 IP，由 Join 时分配
     return jsonify({
         "Interface": {
+            "SrcName": cont_if,
+            "DstPrefix": "eth"
+        }
+    })
+
+@app.route("/NetworkDriver.Join", methods=["POST"])
+def join():
+    data = request.get_json(force=True)
+    eid = data["EndpointID"][:12]
+    cont_if = f"veth{eid[:7]}c"
+    sandbox = data["SandboxKey"]
+
+    # 绑定容器 namespace
+    ns_name = sandbox.split("/")[-1]
+    ns_dir = "/var/run/netns"
+    os.makedirs(ns_dir, exist_ok=True)
+    ns_path = os.path.join(ns_dir, ns_name)
+    try:
+        os.symlink(sandbox, ns_path)
+    except FileExistsError:
+        pass
+
+    # 获取 Docker 给出的 IP
+    ip_addr = data.get("Interface", {}).get("Address", "")
+    # 移动接口到容器 namespace 并配置 IP
+    sh(["ip", "link", "set", cont_if, "netns", ns_name])
+    if ip_addr:
+        sh(["ip", "netns", "exec", ns_name, "ip", "addr", "add", ip_addr, "dev", cont_if])
+    sh(["ip", "netns", "exec", ns_name, "ip", "link", "set", cont_if, "up"])
+
+    return jsonify({
+        "InterfaceName": {
             "SrcName": cont_if,
             "DstPrefix": "eth"
         }
@@ -80,19 +104,10 @@ def create_endpoint():
 def delete_endpoint():
     data = request.get_json(force=True)
     eid = data["EndpointID"][:12]
-    host_if = f"tap{eid[:7]}h"
+    host_if = f"veth{eid[:7]}h"
     sh(["ovs-vsctl", "--if-exists", "del-port", OVS_BRIDGE, host_if])
     sh(["ip", "link", "del", host_if])
     return jsonify({})
-
-@app.route("/NetworkDriver.Join", methods=["POST"])
-def join():
-    return jsonify({
-        "InterfaceName": {
-            "SrcName": "",
-            "DstPrefix": "eth"
-        }
-    })
 
 @app.route("/NetworkDriver.Leave", methods=["POST"])
 def leave():
@@ -107,7 +122,6 @@ def endpoint_oper_info():
 # --------------------------
 def run_gunicorn():
     import gunicorn.app.base
-#    from gunicorn.six import iteritems
 
     class StandaloneApplication(gunicorn.app.base.BaseApplication):
         def __init__(self, app, options=None):
@@ -140,7 +154,6 @@ def run_gunicorn():
         "loglevel": "info",
     }
 
-    # 后台启动 Gunicorn
     StandaloneApplication(app, options).run()
     os.chmod(sock_path, 0o666)
 
@@ -148,7 +161,6 @@ if __name__ == "__main__":
     print("启动 OVS Docker 插件（Gunicorn 后台模式）…")
     p = multiprocessing.Process(target=run_gunicorn)
     p.start()
-    # 等待 socket 文件生成
     time.sleep(1)
     print("插件启动完成，socket 文件：/run/docker/plugins/ovs.sock")
 

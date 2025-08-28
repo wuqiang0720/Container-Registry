@@ -12,7 +12,7 @@ ExecStart=/usr/bin/ovs-vsctl --may-exist add-port br_prv phy-br_prv -- set inter
 ExecStart=/usr/sbin/ip link set br_prv up
 ExecStart=/usr/sbin/ip link set br-int up
 ExecStart=/bin/bash -c "ip addr show dev br_prv | grep -q 192.168.1.1/24 || ip addr add 192.168.1.1/24 dev br_prv"
-ExecStart=/bin/bash -c 'docker network inspect macvlan_net >/dev/null 2>&1 || docker network create -d macvlan --subnet=192.168.1.0/24 --gateway=192.168.1.1 -o parent=br-int macvlan_net'
+ExecStart=/bin/bash -c 'docker network inspect ovs-net >/dev/null 2>&1 || docker network create -d ovs --subnet=192.168.1.0/24 --gateway=192.168.1.1 -o parent=br-int ovs-net'
 RemainAfterExit=yes
 
 [Install]
