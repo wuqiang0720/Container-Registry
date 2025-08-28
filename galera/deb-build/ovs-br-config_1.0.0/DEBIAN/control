@@ -1,0 +1,10 @@
+Package: ovs-br
+Version: 1.0.0
+Section: net
+Priority: optional
+Architecture: amd64
+Depends: openvswitch-switch, iproute2, docker.io
+Maintainer: Qiang Wu <wuqiang0720@126.com>
+Description: Bring up OVS bridges and patch ports at boot
+ Configures br-int, br_prv, patch ports and Docker macvlan network at boot.
+
