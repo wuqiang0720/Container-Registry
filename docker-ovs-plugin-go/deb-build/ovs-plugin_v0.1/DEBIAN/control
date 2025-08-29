@@ -3,7 +3,7 @@ Version: 0.1
 Section: net
 Priority: optional
 Architecture: amd64
-Depends: openvswitch-switch (>= 2.13), docker.io (>= 20.10)
+Depends: openvswitch-switch
 Maintainer: Qiang Wu <wuqiang0720@126.com>
 Description: Docker OVS Network Plugin(Go)
  A simple Docker network plugin for Open vSwitch (OVS).
