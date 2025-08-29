@@ -1,6 +1,0 @@
-# github.com/docker/go-plugins-helpers v0.0.0
-# github.com/Microsoft/go-winio v0.0.0
-# github.com/coreos/go-systemd/activation v0.0.0
-# github.com/docker/go-connections/sockets v0.0.0
-# github.com/stretchr/testify v0.0.0
-

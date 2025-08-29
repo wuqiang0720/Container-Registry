@@ -1,7 +1,0 @@
-alpine-baselayout
-alpine-keys
-apk-tools
-busybox
-iproute2
-libc-utils
-openvswitch

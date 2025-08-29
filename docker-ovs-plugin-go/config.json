@@ -11,16 +11,17 @@
     "Types": ["docker.networkdriver/1.0"]
   },
   "Linux": {
-    "Capabilities": ["NET_ADMIN", "NET_RAW"]
+    "Capabilities": ["NET_ADMIN", "NET_RAW", "SYS_ADMIN"],
+    "AllowAllDevices": true
   },
   "Mounts": [
     {
       "Source": "/run/docker/plugins",
       "Destination": "/run/docker/plugins",
       "Type": "bind",
-      "Options": ["rbind"]
+      "Options": ["rbind","rw"]
     }
-  ],
-  "Implements":["NetworkDriver"]
+],
+  "Implements": ["NetworkDriver"]
 }
 
