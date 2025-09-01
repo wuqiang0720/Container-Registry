@@ -8,6 +8,8 @@ git remote -v
 git config --global user.email "wuqiang0720@126.com"
 ssh-keygen -t ed25519 -C "wuqiang0720@126.com"
 cat /root/.ssh/id_ed25519.pub   然后把输出的公钥复制到 GitHub → Settings → SSH and GPG keys → New SSH key
+ssh -T git@github.com
+
 git remote -v
 
 git clone --recursive git@github.com:wuqiang0720/Container-Registry.git
