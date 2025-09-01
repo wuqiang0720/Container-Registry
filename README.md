@@ -3,12 +3,12 @@
 > [OS Configuration](https://github.com/wuqiang0720/Container-Registry/blob/main/Ubuntu-configuration.md)
 
 ```bash
-git clone --recursive git@github.com:wuqiang0720/Container-Registry.git
 cd Container-Registry/
 git remote -v
 git config --global user.email "wuqiang0720@126.com"
-ssh-keygen -t ed25519 -C "wuqiang0720@126.com
+ssh-keygen -t ed25519 -C "wuqiang0720@126.com"
 cat /root/.ssh/id_ed25519.pub   然后把输出的公钥复制到 GitHub → Settings → SSH and GPG keys → New SSH key
+git clone --recursive git@github.com:wuqiang0720/Container-Registry.git
 
 git add .
 git commit -m "你的提交信息"
