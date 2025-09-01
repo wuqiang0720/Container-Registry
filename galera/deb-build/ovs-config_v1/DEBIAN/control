@@ -1,4 +1,4 @@
-Package: ovs-br
+Package: ovs-conf
 Version: 1.0.1
 Section: net
 Priority: optional

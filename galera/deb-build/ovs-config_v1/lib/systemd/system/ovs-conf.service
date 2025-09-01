@@ -1,0 +1,13 @@
+[Unit]
+Description=Initialize OVS bridges and Docker network
+After=network-online.target openvswitch-switch.service
+Wants=network-online.target openvswitch-switch.service
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/bin/init-ovs.sh
+RemainAfterExit=yes
+
+[Install]
+WantedBy=multi-user.target
+
