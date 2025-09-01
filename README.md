@@ -16,6 +16,8 @@ git clone --recursive git@github.com:wuqiang0720/Container-Registry.git
 
 git add .
 git commit -m "你的提交信息"
+
+git branch
 git push origin main
 ```
 # 我的 Docker 镜像集合
