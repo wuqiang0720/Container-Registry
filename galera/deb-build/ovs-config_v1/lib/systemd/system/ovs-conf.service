@@ -6,6 +6,7 @@ Wants=network-online.target openvswitch-switch.service
 [Service]
 Type=oneshot
 ExecStart=/usr/local/bin/init-ovs.sh
+ExecStop=/usr/local/bin/cleanup-ovs.sh
 RemainAfterExit=yes
 
 [Install]
