@@ -1,14 +1,14 @@
 {
   "Name": "ovs",
   "Description": "OVS Docker Network Plugin (Go)",
-  "Entrypoint": ["/usr/local/bin/ovs-plugin"],
+  "Entrypoint": ["/usr/bin/ovs-plugin"],
   "WorkDir": "/",
   "Network": {
     "Type": "host"
   },
   "Interface": {
     "Socket": "ovs.sock",
-    "Types": ["docker.networkdriver/1.0"]
+    "Types": ["docker.network/driver"]
   },
   "Linux": {
     "Capabilities": ["NET_ADMIN", "NET_RAW", "SYS_ADMIN"],
