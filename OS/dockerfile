@@ -4,4 +4,7 @@ RUN zypper install -y --no-recommends \
         iproute2 \
         iputils \
     && zypper clean --all
+# 添加 Healthcheck
+HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 \
+    CMD pgrep -x bash > /dev/null || exit 1
 
