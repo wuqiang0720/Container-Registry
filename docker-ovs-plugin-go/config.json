@@ -1,6 +1,6 @@
 {
   "description": "Open vSwitch Network Plugin",
-  "documentation": "https://example.com/ovs-plugin-docs",
+  "documentation": "https://github.com/wuqiang0720/Container-Registry/edit/main/docker-ovs-plugin-go",
   "entrypoint": ["/usr/local/bin/ovs-plugin"],
   "network": {
     "type": "host"
