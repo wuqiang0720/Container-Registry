@@ -1,27 +1,53 @@
 {
-  "Name": "ovs",
-  "Description": "OVS Docker Network Plugin (Go)",
-  "Entrypoint": ["/usr/bin/ovs-plugin"],
-  "WorkDir": "/",
-  "Network": {
-    "Type": "host"
+  "description": "Open vSwitch Network Plugin",
+  "documentation": "https://example.com/ovs-plugin-docs",
+  "entrypoint": ["/usr/local/bin/ovs-plugin"],
+  "network": {
+    "type": "host"
   },
-  "Interface": {
-    "Socket": "ovs.sock",
-    "Types": ["docker.network/driver"]
+  "interface": {
+    "types": ["docker.networkdriver/1.0"],
+    "socket": "ovs.sock"
   },
-  "Linux": {
-    "Capabilities": ["NET_ADMIN", "NET_RAW", "SYS_ADMIN"],
-    "AllowAllDevices": true
-  },
-  "Mounts": [
+  "propagatedmount": "/var/lib/docker/plugins",
+  "mounts": [
     {
-      "Source": "/run/docker/plugins",
-      "Destination": "/run/docker/plugins",
-      "Type": "bind",
-      "Options": ["rbind","rw"]
+      "name": "ovs-socket",
+      "description": "OVS control socket",
+      "settable": ["source"],
+      "source": "/run/openvswitch/db.sock",
+      "destination": "/run/openvswitch/db.sock",
+      "type": "bind",
+      "options": ["rbind"]
     }
-],
-  "Implements": ["NetworkDriver"]
+  ],
+  "env": [
+    {
+      "name": "LOG_LEVEL",
+      "description": "Log level",
+      "settable": ["value"],
+      "value": "info"
+    }
+  ],
+  "linux": {
+    "capabilities": [
+      "CAP_NET_ADMIN",
+      "CAP_NET_RAW",
+      "CAP_SYS_ADMIN",
+      "CAP_SYS_MODULE"
+    ],
+    "allowAllDevices": true,
+    "devices": [
+      {
+        "path": "/dev/net/tun",
+        "type": "c",
+        "major": 10,
+        "minor": 200,
+        "fileMode": 438,
+        "allow": true
+      }
+    ],
+    "privileged": true
+  }
 }
 
