@@ -9,8 +9,8 @@ ovs-vsctl set-manager ptcp:6640
 dpkg -i ovs-config_v1.deb
 systemctl start ovs-conf
 systemctl enable ovs-conf
+docker plugin install ghcr.io/wuqiang0720/ovs:latest --grant-all-permissions
 
-dpkg -i ovs-plugin.deb
 
 cp ~/Container-Registry/ldap/sssd.conf /etc/sssd/sssd.conf
 cp ~/Container-Registry/ldap/sudo-ldap.conf /etc/sudo-ldap.conf

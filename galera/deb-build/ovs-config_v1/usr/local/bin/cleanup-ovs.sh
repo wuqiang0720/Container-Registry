@@ -2,7 +2,7 @@
 # cleanup-ovs.sh
 # 停止 OVS 网络并清理桥、端口和 Docker 网络
 
-set -e
+set -euo pipefail
 
 BRIDGES=("br-int" "br_prv")
 DOCKER_NET="ovs-net"
@@ -38,6 +38,13 @@ for iface in $(ip -o link show | awk -F': ' '{print $2}'); do
         ip link delete "$iface" 2>/dev/null || true
     fi
 done
+
+echo "==== 停止容器相关网络 ===="
+# 删除 Docker 网络（如果存在）
+if docker network inspect "$DOCKER_NET" >/dev/null 2>&1; then
+    echo "Removing Docker network $DOCKER_NET"
+    docker network rm "$DOCKER_NET" || true
+fi
 
 echo "==== OVS 清理完成 ===="
 

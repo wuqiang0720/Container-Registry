@@ -19,7 +19,7 @@ ip link set br-int up
 ip addr show dev br_prv | grep -q 192.168.1.1/24 || ip addr add 192.168.1.1/24 dev br_prv
 
 # 创建 Docker 网络
-docker network inspect ovs-net >/dev/null 2>&1 || docker network create -d ovs --subnet=192.168.1.0/24 --gateway=192.168.1.1 -o parent=br-int ovs-net
+docker network inspect ovs-net >/dev/null 2>&1 || docker network create -d ghcr.io/wuqiang0720/ovs:latest --subnet=192.168.1.0/24 --gateway=192.168.1.1 -o parent=br-int ovs-net
 
 # 清空 br-int 上的 IP（如果需要）
 ip addr flush br-int
