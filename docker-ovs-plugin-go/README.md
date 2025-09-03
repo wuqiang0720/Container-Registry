@@ -1,4 +1,6 @@
+
 ```
+<<<<<<< Updated upstream
 wget https://dl.google.com/go/go1.21.0.linux-amd64.tar.gz
 tar -C /usr/local -xzf go1.21.0.linux-amd64.tar.gz
 export PATH=$PATH:/usr/local/go/bin
@@ -46,6 +48,16 @@ runc --root /run/docker/runtime-runc/plugins.moby exec  3dfee2aeb864051e5ba44a74
 
 
 
+=======
+docker build -t rootfsimage .
+id=$(docker create rootfsimage true) # id was cd851ce43a403 when the image was created
+sudo mkdir rootfs
+sudo docker export "$id" | sudo tar -x -C rootfs
+docker rm -vf "$id"
+docker rmi rootfsimage
+
+CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o ovs-plugin main.go
+>>>>>>> Stashed changes
 
 
 
