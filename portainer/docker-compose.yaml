@@ -1,0 +1,21 @@
+version: "3.9"
+
+services:
+  portainer:
+    image: ghcr.io/wuqiang0720/portainer-ce:latest
+    container_name: portainer
+    restart: always
+    privileged: true
+    networks:
+      ovs-net:
+        ipv4_address: 192.168.1.200
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - portainer_data:/data
+volumes:
+  portainer_data:
+
+networks:
+  ovs-net:
+    external: true
+
