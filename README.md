@@ -33,6 +33,8 @@ ovs-vsctl set-manager ptcp:6640
 dpkg -i ovs-config_v1.deb
 systemctl start ovs-conf
 systemctl enable ovs-conf
+
+#安装docker-ovs-plugin
 docker plugin install ghcr.io/wuqiang0720/ovs:latest --grant-all-permissions
 
 
