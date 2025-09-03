@@ -3,7 +3,6 @@
 > [OS Configuration](https://github.com/wuqiang0720/Container-Registry/blob/main/Ubuntu-configuration.md)  
 > [New SSH key](https://github.com/settings/ssh/new)  
 ```bash
-cd Container-Registry/
 git remote -v
 git config --global user.email "wuqiang0720@126.com"
 ssh-keygen -t ed25519 -C "wuqiang0720@126.com"
