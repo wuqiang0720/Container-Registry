@@ -5,8 +5,9 @@ apt update && apt install -y sssd sssd-ldap libnss-sss libpam-sss ldap-utils sud
 systemctl start openvswitch-switch docker
 systemctl enable  openvswitch-switch docker
 ovs-vsctl set-manager ptcp:6640
-
-dpkg -i ovs-config_v1.deb
+```
+dpkg -i [ovs-config_v1.deb](https://github.com/wuqiang0720/Container-Registry/raw/refs/heads/main/galera/deb-build/ovs-config_v1.deb)
+```
 systemctl start ovs-conf
 systemctl enable ovs-conf
 docker plugin install ghcr.io/wuqiang0720/ovs:latest --grant-all-permissions
