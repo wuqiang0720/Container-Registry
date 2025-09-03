@@ -26,6 +26,24 @@ root@ubuntu:~/Container-Registry/docker-ovs-plugin-go#
 
 
 
+docker build -t rootfsimage .
+id=$(docker create rootfsimage true) # id was cd851ce43a403 when the image was created
+mkdir -p rootfs
+docker export "$id" | sudo tar -x -C rootfs
+docker rm -vf "$id"
+docker rmi rootfsimage
+ls -ld rootfs/
+
+
+docker plugin create ghcr.io/wuqiang0720/ovs .
+docker plugin enable ghcr.io/wuqiang0720/ovs
+
+
+# 进入plugin查看或者调试
+runc --root /run/docker/runtime-runc/plugins.moby exec  3dfee2aeb864051e5ba44a7452927df173a17238c871e666c4ba26b882c52d21 ip a
+
+
+
 
 
 
