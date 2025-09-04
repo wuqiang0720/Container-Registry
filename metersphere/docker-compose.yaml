@@ -1,0 +1,28 @@
+version: "3.9"
+
+services:
+  metersphere:
+    image: ghcr.io/wuqiang0720/metersphere-ce-allinone:latest
+    container_name: metersphere
+    restart: unless-stopped
+    depends_on: []
+    environment:
+      MS_DB_HOST: 192.168.1.7
+      MS_DB_PORT: 3306
+      MS_DB_NAME: metersphere
+      MS_DB_USER: msuser
+      MS_DB_PASSWORD: mspassword
+    volumes:
+      - metersphere_data:/opt/metersphere/data
+    networks:
+      ovs-net:
+        ipv4_address: 192.168.1.13
+
+volumes:
+  metersphere_data:
+    driver: local
+
+networks:
+  ovs-net:
+    external: true
+
