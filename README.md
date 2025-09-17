@@ -45,7 +45,7 @@ cp ~/Container-Registry/ldap/sssd.conf /etc/sssd/sssd.conf
 cp ~/Container-Registry/ldap/sudo-ldap.conf /etc/sudo-ldap.conf
 
 chmod 600 /etc/sssd/sssd.conf
-
+echo "192.168.1.2 openldap-server" >> /etc/hosts
 echo "session required pam_mkhomedir.so skel=/etc/skel/ umask=0022" >> /etc/pam.d/common-session
 
 systemctl restart sssd
