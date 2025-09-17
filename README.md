@@ -1,6 +1,5 @@
 > [!NOTE]
 > [Generate Tokens](https://github.com/settings/tokens/)  
-> [OS Configuration](https://github.com/wuqiang0720/Container-Registry/blob/main/Ubuntu-configuration.md)  
 > [New SSH key](https://github.com/settings/ssh/new)  
 ```bash
 git remote -v
