@@ -7,12 +7,6 @@ git config --global user.email "wuqiang0720@126.com"
 ssh-keygen -t ed25519 -C "wuqiang0720@126.com"
 cat /root/.ssh/id_ed25519.pub   然后把输出的公钥复制到 GitHub → Settings → SSH and GPG keys → New SSH key
 
-curl -X POST \
-  -H "Authorization: token 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" \
-  -H "Accept: application/vnd.github+json" \
-  https://api.github.com/wuqiang0720/keys \
-  -d "{\"title\":\"MyLaptop\",\"key\":\"$(cat ~/.ssh/id_ed25519.pub)\"}"
-
 ssh -T git@github.com
 
 git remote -v
