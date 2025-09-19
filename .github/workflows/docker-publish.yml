@@ -29,19 +29,21 @@ jobs:
         push: true
         tags: ghcr.io/wuqiang0720/container-registry:latest
 
-    - name: Make latest package public
+    - name: Make pushed package public
       run: |
-        PACKAGE_NAME=$(gh api \
-          -H "Accept: application/vnd.github.v3+json" \
-          /users/${{ github.repository_owner }}/packages?package_type=container \
-          | jq -r '.[0].name')
+        # 从 tag 中提取 GHCR 包名
+        IMAGE_TAG="ghcr.io/${{ github.repository_owner }}/container-registry:latest"
+        PACKAGE_NAME=$(echo "$IMAGE_TAG" | awk -F'/' '{print $2}' | awk -F':' '{print $1}')
 
-        echo "检测到最新的包: $PACKAGE_NAME"
+        echo "检测到刚 push 的包: $PACKAGE_NAME"
         gh api \
           -X PATCH \
           -H "Accept: application/vnd.github.v3+json" \
           /users/${{ github.repository_owner }}/packages/container/$PACKAGE_NAME/visibility \
           -f visibility=public
+
+        echo "✅ $PACKAGE_NAME 已设置为 public"
       env:
         GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
 
