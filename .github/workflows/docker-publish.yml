@@ -29,21 +29,6 @@ jobs:
         push: true
         tags: ghcr.io/wuqiang0720/container-registry:latest
 
-    - name: Make pushed package public
-      run: |
-        echo "获取当前账号的所有 GHCR 容器包..."
-        # 获取账号下所有 container 类型的包，取最新创建的一个
-        PACKAGE_NAME=$(gh api \
-          -H "Accept: application/vnd.github.v3+json" \
-          /users/${{ github.repository_owner }}/packages?package_type=container \
-          | jq -r 'sort_by(.created_at) | last | .name')
-
-        if [ -z "$PACKAGE_NAME" ]; then
-          echo "❌ 没有找到任何容器包"
-          exit 1
-        fi
-
-        echo "检测到刚 push 的包: $PACKAGE_NAME"
 
 
 
