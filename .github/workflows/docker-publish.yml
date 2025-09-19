@@ -32,8 +32,7 @@ jobs:
       run: |
           # 列出本地镜像
           docker images
-          
+          docker ps
           # 获取指定镜像的 digest
-          docker inspect --format='{{index .RepoDigests 0}}' ghcr.io/wuqiang0720/container-registry:latest
-
+          docker exec docker_registry /bin/bash -c "ls /var/lib/registry/docker/registry/v2/repositories"
 
