@@ -28,13 +28,8 @@ jobs:
         push: true
         tags: ghcr.io/wuqiang0720/container-registry:latest
 
-    - name: Print GHCR tags
-      env:
-        GHCR_PAT: ${{ secrets.GHCR_PAT }}
-      run: |
-        curl -H "Authorization: Bearer $GHCR_PAT" \
-             -H "Accept: application/vnd.github+json" \
-             https://ghcr.io/v2/wuqiang0720/container-registry/tags/list
- 
+    - name: List local images
+      run: docker images
+     
 
 
