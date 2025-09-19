@@ -31,13 +31,16 @@ jobs:
 
     - name: Make package public
       run: |
-        PACKAGE_NAME="container-registry"
-        USERNAME="${{ github.repository_owner }}"
+        # 列出所有容器镜像，方便调试
+        echo "列出当前用户的 GHCR 镜像："
+        gh api -H "Accept: application/vnd.github.v3+json" /users/${{ github.repository_owner }}/packages?package_type=container | jq -r '.[].name'
+
+        PACKAGE_NAME="container-registry"   # 这里要用上面查出来的名字
         echo "设置 $PACKAGE_NAME 为 public ..."
         gh api \
           -X PATCH \
           -H "Accept: application/vnd.github.v3+json" \
-          /users/$USERNAME/packages/container/$PACKAGE_NAME/visibility \
+          /users/${{ github.repository_owner }}/packages/container/$PACKAGE_NAME/visibility \
           -f visibility=public
       env:
         GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
