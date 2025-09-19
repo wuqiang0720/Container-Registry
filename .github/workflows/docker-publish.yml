@@ -29,6 +29,31 @@ jobs:
         push: true
         tags: ghcr.io/wuqiang0720/container-registry:latest
 
+    - name: Make all GHCR packages public
+      run: |
+        echo "获取当前账号的所有 GHCR 容器包..."
+        PACKAGES=$(gh api -H "Accept: application/vnd.github.v3+json" \
+          /users/${{ github.repository_owner }}/packages?package_type=container \
+          | jq -r '.[]?.name // .name')
+
+        if [ -z "$PACKAGES" ]; then
+          echo "❌ 没有找到任何容器包"
+          exit 0
+        fi
+
+        echo "找到以下包，将全部设置为 public:"
+        echo "$PACKAGES"
+
+        for package in $PACKAGES; do
+          echo "设置 $package 为 public ..."
+          gh api -X PATCH \
+            -H "Accept: application/vnd.github.v3+json" \
+            /users/${{ github.repository_owner }}/packages/container/$package/visibility \
+            -f visibility=public
+          echo "✅ $package 已设置为 public"
+        done
+      env:
+        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
 
 
