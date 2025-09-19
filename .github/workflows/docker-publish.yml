@@ -28,11 +28,11 @@ jobs:
         push: true
         tags: ghcr.io/wuqiang0720/container-registry:latest
 
-    - name: Print Docker list from GHCR
+    - name: Print GHCR tags
       env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        GHCR_PAT: ${{ secrets.GHCR_PAT }}
       run: |
-        curl -H "Authorization: Bearer $GITHUB_TOKEN" \
+        curl -H "Authorization: Bearer $GHCR_PAT" \
              -H "Accept: application/vnd.github+json" \
              https://ghcr.io/v2/wuqiang0720/container-registry/tags/list
  
