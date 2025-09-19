@@ -27,19 +27,8 @@ jobs:
         context: .
         push: true
         tags: ghcr.io/wuqiang0720/container-registry:latest
-    - name: Make image public
+    - name: Print pushed image name
       run: |
-        # 获取包名称（从仓库名称转换）
-        PACKAGE_NAME=$(echo "${{ env.IMAGE_NAME }}" | tr '/' '-')
-        echo "$PACKAGE_NAME"
-        # 设置包为公开
-        curl -s -X PATCH \
-          -H "Authorization: token ${{ secrets.MY_GHCR_PAT }}" \
-          -H "Accept: application/vnd.github.v3+json" \
-          "https://api.github.com/user/packages/container/$PACKAGE_NAME/visibility" \
-          -d '{"visibility":"public"}'
-        
-        echo "Package $PACKAGE_NAME is now public"
-
+        echo "Pushed image: ${{ steps.build-image.outputs.image }}"
 
 
