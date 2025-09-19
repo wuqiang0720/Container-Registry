@@ -28,3 +28,15 @@ jobs:
         context: .
         push: true
         tags: ghcr.io/wuqiang0720/container-registry:latest
+
+    - name: Make package public
+      run: |
+        PACKAGE_NAME="container-registry"
+        echo "设置 $PACKAGE_NAME 为 public ..."
+        gh api \
+          -X PATCH \
+          -H "Accept: application/vnd.github.v3+json" \
+          /user/packages/container/$PACKAGE_NAME/visibility \
+          -f visibility=public
+      env:
+        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
