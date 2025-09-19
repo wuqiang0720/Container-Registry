@@ -27,8 +27,6 @@ jobs:
         context: .
         push: true
         tags: ghcr.io/wuqiang0720/container-registry:latest
-    - name: Print pushed image name
-      run: |
-        echo "Pushed image: ${{ steps.build-image.outputs.image }}"
+ 
 
 
