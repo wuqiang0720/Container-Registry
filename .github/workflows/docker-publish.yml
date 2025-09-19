@@ -29,11 +29,19 @@ jobs:
         push: true
         tags: ghcr.io/wuqiang0720/container-registry:latest
 
-    - name: List GHCR packages
+    - name: Make latest package public
       run: |
-        echo "列出当前用户的 GHCR 镜像："
-        gh api \
+        PACKAGE_NAME=$(gh api \
           -H "Accept: application/vnd.github.v3+json" \
-          /users/${{ github.repository_owner }}/packages?package_type=container | jq .
+          /users/${{ github.repository_owner }}/packages?package_type=container \
+          | jq -r '.[0].name')
+
+        echo "检测到最新的包: $PACKAGE_NAME"
+        gh api \
+          -X PATCH \
+          -H "Accept: application/vnd.github.v3+json" \
+          /users/${{ github.repository_owner }}/packages/container/$PACKAGE_NAME/visibility \
+          -f visibility=public
       env:
         GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
